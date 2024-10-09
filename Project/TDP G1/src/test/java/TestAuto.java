@@ -16,11 +16,15 @@ public class TestAuto {
     @Test
     public void testgetPuntajePedido() {
         Cliente cliente = new Cliente("franveron", "mandarina123", "Francisco Veron");
-        Pedido pedido = new Pedido(cliente, 3, false, true, 6, Constantes.ZONA_STANDARD );
+        Pedido pedido1 = new Pedido(cliente, 2, false, false, 6, Constantes.ZONA_STANDARD );
+        Pedido pedido2 = new Pedido(cliente, 2, false, true, 6, Constantes.ZONA_STANDARD );
+        Pedido pedido3 = new Pedido(cliente, 5, false, false, 6, Constantes.ZONA_STANDARD );
 
         Auto auto = new Auto("AAA123", 4, false);
 
-        Assert.assertEquals((Integer) 120, auto.getPuntajePedido(pedido));
+        Assert.assertEquals((Integer) 60, auto.getPuntajePedido(pedido1)); // ESTA DEVOLVIENDO 80 COMO SI NO TUVIIERA EN CUENTA EL BAUL
+        Assert.assertEquals((Integer) 80, auto.getPuntajePedido(pedido2));
+        Assert.assertNull(auto.getPuntajePedido(pedido3));
     }
     
 }
