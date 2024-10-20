@@ -20,6 +20,13 @@
             <version>RELEASE</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>SubiQueTeLlevo</groupId>
+            <artifactId>SubiQueTeLlevo.jar</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/libs/SubiQueTeLlevo.jar</systemPath>
+        </dependency>
     </dependencies>
 
 </project>
