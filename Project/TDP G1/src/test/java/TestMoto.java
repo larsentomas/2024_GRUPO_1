@@ -14,7 +14,7 @@ public class TestMoto {
 
     @Before
     public void setUp() {
-        Moto moto = new Moto("AAA123");
+        moto = new Moto("AAA123");
     }
 
     @Test

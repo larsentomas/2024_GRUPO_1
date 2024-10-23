@@ -1,0 +1,26 @@
+
+// Pagina Log in
+
+1. Usuario existe y contraseña correcta y es cliente, se pasa a la pantalla de cliente
+2. Usuario existe y contraseña correcta y es admin, se pasa a la pantalla de admin
+3. usuario existe y contraseña incorrecta, se lanza ventana emergente con mensaje Mensaje.PASS_ERRONEO
+4. Usuario no existe, se lanza ventana emergente con mensaje Mensajes.USUARIO_DESCONOCIDO
+
+// Pagina Registrarse
+
+1. Si todo anda bien, se registra el cliente y se vuelve a panel login
+2. Si el usuario ya existe, se lanza ventana emergente con mensaje Mensaje.USUARIO_REPETIDO
+3. Si la contraseña y confirmacion no coinciden , se lanza ventana emergente con mensaje Mensaje.PASS_NO_COINCIDE
+
+// Pagina Cliente
+
+1. Realizar un nuevo pedido
+    a. Cant_Pax tiene un numero entre 1 y 10 y Cant_KM >= 0, Si la empresa tiene registrado al menos un vehículo
+    que pueda satisfacer el viaje, se genera un nuevo pedido, se borran los contenidos de los JTextField CANT_PAX
+    y CANT_KM
+    b. Cant_Pax tiene un numero entre 1 y 10 y Cant_KM >= 0, Si la empresa no posee un Vehículo que pueda satisfacer
+    el viaje, se lanza una ventana emergente con el mensaje Mensajes.SIN_VEHICULO_PARA_PEDIDO
+
+2. Calificar un viaje
+    a. Calificacion contiene un entero entre 0 y 5, el viaje se da por terminado. se elimina del JTextArea
+    PEDIDO_O_VIAJE_ACTUAL, y se agrega a la JList LISTA_VIAJES_CLIENTE. se borra el contenido del JTextField CALIFICACION

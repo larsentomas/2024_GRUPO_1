@@ -14,7 +14,7 @@ public class TestCombi {
 
     @Before
     public void setUp() {
-        Combi combi = new Combi("AAA123", 9, false);
+        combi = new Combi("AAA123", 9, false);
     }
 
     @Test
@@ -37,4 +37,3 @@ public class TestCombi {
     }
 
 }
-

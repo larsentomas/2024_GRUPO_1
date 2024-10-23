@@ -1,0 +1,20 @@
+Visualización de listas e información de choferes.
+Se comienza con datos ya cargados
+
+
+1. Si no selecciono un chofer, la lista de viajes tiene que estar vacia, calificacion chofer esta vacio y sueldo chofer
+tambien vacio
+2. Si selecciono chofer, aparecen sus viajes, su calificacion y el sueldo
+3. Listado clientes no vacio
+4. Listado vehiculos no vacio
+5. Listado viajes historicos no vacio
+6. total sueldo a pagar no vacio
+
+Registro de un nuevo chofer
+
+
+
+Registro de un nuevo Vehículo
+
+
+Gestión de Pedidos (generado por parte de un Cliente)

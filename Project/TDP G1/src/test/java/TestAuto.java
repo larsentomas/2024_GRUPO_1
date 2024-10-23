@@ -13,7 +13,7 @@ public class TestAuto {
 
     @Before
     public void setUp() {
-        Auto auto = new Auto("AAA123", 4, false);
+        auto = new Auto("AAA123", 4, false);
     }
 
     @Test
@@ -34,5 +34,5 @@ public class TestAuto {
         Assert.assertEquals((Integer) 80, auto.getPuntajePedido(pedido2));
         Assert.assertNull(auto.getPuntajePedido(pedido3));
     }
-    
+
 }
