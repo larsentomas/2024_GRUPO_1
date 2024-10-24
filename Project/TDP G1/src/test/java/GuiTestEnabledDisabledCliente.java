@@ -29,23 +29,23 @@ public class GuiTestEnabledDisabledCliente {
     static Chofer chofer;
     static Vehiculo auto;
 
-    static JTextArea pedidosYViajes;
+    JTextArea pedidosYViajes;
 
-    static JTextField calificacion;
-    static JTextField valorViaje;
-    static JTextField cantPax;
-    static JTextField cantKM;
+    JTextField calificacion;
+    JTextField valorViaje;
+    JTextField cantPax;
+    JTextField cantKM;
 
-    static JRadioButton zonaEstandar;
-    static JRadioButton zonaSinAsfaltar;
-    static JRadioButton zonaPeligrosa;
+    JRadioButton zonaEstandar;
+    JRadioButton zonaSinAsfaltar;
+    JRadioButton zonaPeligrosa;
 
-    static JCheckBox baul;
-    static JCheckBox mascota;
+    JCheckBox baul;
+    JCheckBox mascota;
 
-    static JButton calificarPagar;
-    static JButton nuevoPedido;
-    static JButton cerrarSesion;
+    JButton calificarPagar;
+    JButton nuevoPedido;
+    JButton cerrarSesion;
 
     @BeforeClass
     public static void setUpClass() {
@@ -74,16 +74,10 @@ public class GuiTestEnabledDisabledCliente {
         JTextField password_usuario = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PASSWORD);
 
         // Logueo usuario
-        robot.delay(GuiTestUtils.getDelay());
-        GuiTestUtils.clickComponente(nombre_usuario, robot);
-        robot.delay(GuiTestUtils.getDelay());
-        GuiTestUtils.tipeaTexto(usuario, robot);
-        robot.delay(GuiTestUtils.getDelay());
-        GuiTestUtils.clickComponente(password_usuario, robot);
-        robot.delay(GuiTestUtils.getDelay());
-        GuiTestUtils.tipeaTexto(password, robot);
-        robot.delay(GuiTestUtils.getDelay());
+        GuiTestUtils.cargarJTextField(nombre_usuario, usuario, robot);
+        GuiTestUtils.cargarJTextField(password_usuario, password, robot);
         GuiTestUtils.clickComponente(login, robot);
+        robot.delay(GuiTestUtils.getDelay());
 
         pedidosYViajes = (JTextArea) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PEDIDO_O_VIAJE_ACTUAL);
         calificacion = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.CALIFICACION_DE_VIAJE);
@@ -102,6 +96,7 @@ public class GuiTestEnabledDisabledCliente {
         nuevoPedido = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.NUEVO_PEDIDO);
         cerrarSesion = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.CERRAR_SESION_CLIENTE);
 
+        // Reseteo pedidos y viajes
         e.getPedidos().clear();
         e.getViajesTerminados().clear();
         e.getViajesIniciados().clear();
@@ -109,8 +104,18 @@ public class GuiTestEnabledDisabledCliente {
     }
 
     @Test
-    public void testSinViaje() {
+    public void testCamposVacios() {
+        robot.delay(GuiTestUtils.getDelay());
+        // Deberian estar todos los textfield vacios
+        Assert.assertTrue("Valor de viaje deberia estar vacio", valorViaje.getText().isEmpty());
+        Assert.assertTrue("Cantidad de pasajeros deberia estar vacio", cantPax.getText().isEmpty());
+        Assert.assertTrue("Cantidad de km deberia estar vacio", cantKM.getText().isEmpty());
+        Assert.assertTrue("Calificacion deberia estar vacio", calificacion.getText().isEmpty());
+    }
 
+    @Test
+    public void testSinViaje() {
+        robot.delay(GuiTestUtils.getDelay());
         Assert.assertEquals("Panel de pedido y viaje deberia estar vacio", pedidosYViajes.getComponentCount(), 0);
 
         Assert.assertFalse("Calificacion deberia estar deshabilitado", calificacion.isEnabled());
@@ -127,33 +132,26 @@ public class GuiTestEnabledDisabledCliente {
         Assert.assertTrue("Mascota deberia estar habilitado", mascota.isEnabled());
         Assert.assertFalse("Nuevo pedido deberia estar deshabilitado", nuevoPedido.isEnabled()); // Porque cant pax esta vacio y cant km tambien
 
-        // Cant pax (Limite 1: 1) no vacio y km vacio
-        robot.delay(GuiTestUtils.getDelay());
-        GuiTestUtils.clickComponente(cantPax, robot);
-        robot.delay(GuiTestUtils.getDelay());
-        GuiTestUtils.tipeaTexto("1", robot);
-        Assert.assertFalse("Nuevo pedido deberia estar deshabilitado", nuevoPedido.isEnabled()); // Porque cant km esta vacio
+        // Caso 1: Todo vacio, INVALIDO
+        Assert.assertFalse("Nuevo pedido deberia estar deshabilitado", nuevoPedido.isEnabled());
 
-        // Cant pax (Limite 2: 10) no vacio y km vacio
-        robot.delay(GuiTestUtils.getDelay());
-        GuiTestUtils.clickComponente(cantPax, robot);
-        GuiTestUtils.borraJTextField(cantPax, robot);
-        robot.delay(GuiTestUtils.getDelay());
-        GuiTestUtils.clickComponente(cantPax, robot);
-        robot.delay(GuiTestUtils.getDelay());
-        GuiTestUtils.tipeaTexto("10", robot);
-        Assert.assertFalse("Nuevo pedido deberia estar deshabilitado", nuevoPedido.isEnabled()); // Porque cant km esta vacio
+        // Caso 2: Todo valido, Limite inferior cantidad de pasajeros y limite inferior cantidad de km
+        GuiTestUtils.cargarJTextField(cantPax, "1", robot);
+        GuiTestUtils.cargarJTextField(cantKM, "1", robot);
+        Assert.assertTrue("Nuevo pedido deberia estar habilitado", nuevoPedido.isEnabled());
 
-        // Cant km (Limite: 0km) y pax no vacio
-        GuiTestUtils.clickComponente(cantKM, robot);
-        robot.delay(GuiTestUtils.getDelay());
-        GuiTestUtils.tipeaTexto("0", robot);
-        Assert.assertTrue("Nuevo pedido deberia estar habilitado", nuevoPedido.isEnabled()); // Porque pax y km no estan vacios y cumplen condiciones
+        // Caso 3: Todo valido, Limite superior cantidad de pasajeros, VALIDO
+        GuiTestUtils.limpiarYCargar(cantPax, "10", robot);
+        Assert.assertTrue("Nuevo pedido deberia estar habilitado", nuevoPedido.isEnabled());
 
-        // Cant km no vacio y pax vacio
-        GuiTestUtils.borraJTextField(cantPax, robot);
-        robot.delay(GuiTestUtils.getDelay());
-        Assert.assertFalse("Nuevo pedido deberia estar deshabilitado", nuevoPedido.isEnabled()); // Porque pax esta vacio
+        // Caso 4: Cantidad pasajeros valido, cant kilometros invalido
+        GuiTestUtils.limpiarYCargar(cantKM, "", robot);
+        Assert.assertFalse("Nuevo pedido deberia estar deshabilitado", nuevoPedido.isEnabled());
+
+        // Caso 5: Cantidad pasajeros invalido, cant kilometros valido
+        GuiTestUtils.limpiarYCargar(cantPax, "", robot);
+        GuiTestUtils.limpiarYCargar(cantKM, "1", robot);
+        Assert.assertFalse("Nuevo pedido deberia estar deshabilitado", nuevoPedido.isEnabled());
     }
 
     @Test
@@ -183,7 +181,6 @@ public class GuiTestEnabledDisabledCliente {
 
     @Test
     public void testConViaje() {
-
         try {
             // Cargo viaje
             e.agregarPedido(pedido1);
@@ -204,30 +201,25 @@ public class GuiTestEnabledDisabledCliente {
             Assert.assertFalse("Nuevo pedido deberia estar deshabilitado", nuevoPedido.isEnabled());
 
             Assert.assertTrue("Calificacion deberia estar habilitado", calificacion.isEnabled());
-            Assert.assertFalse("Calificar y pagar deberia estar deshabilitado", calificarPagar.isEnabled()); // porque esta vacio
             Assert.assertEquals(Optional.of(Double.valueOf(valorViaje.getText())), viaje.getValor()); // TODO: Chequear comparacion de doubles
 
-            // Calificar limite 1: 5
-            GuiTestUtils.clickComponente(calificacion, robot);
-            robot.delay(GuiTestUtils.getDelay());
-            GuiTestUtils.tipeaTexto("5", robot);
+            // Caso 1: Todo vacio, invalido
+            Assert.assertFalse("Calificar y pagar deberia estar deshabilitado", calificarPagar.isEnabled()); // porque esta vacio
+
+            // Caso 2: limite superior de calificar, VALIDO
+            GuiTestUtils.cargarJTextField(calificacion, "5", robot);
             Assert.assertTrue("Calificar y pagar deberia estar habilitado", calificarPagar.isEnabled());
 
-            // Calificar limite 2: 0
-            GuiTestUtils.clickComponente(calificacion, robot);
-            robot.delay(GuiTestUtils.getDelay());
-            GuiTestUtils.borraJTextField(calificacion, robot);
-            robot.delay(GuiTestUtils.getDelay());
-            GuiTestUtils.tipeaTexto("0", robot);
+            // Caso 3: limite inferior de calificar, VALIDO
+            GuiTestUtils.limpiarYCargar(calificacion, "0", robot);
             Assert.assertTrue("Calificar y pagar deberia estar habilitado", calificarPagar.isEnabled());
 
-            GuiTestUtils.clickComponente(calificacion, robot);
-            robot.delay(GuiTestUtils.getDelay());
-            GuiTestUtils.borraJTextField(calificacion, robot);
-            robot.delay(GuiTestUtils.getDelay());
-            GuiTestUtils.clickComponente(calificacion, robot);
-            robot.delay(GuiTestUtils.getDelay());
-            GuiTestUtils.tipeaTexto("22", robot);
+            // Caso 4 : Menor al limite inferior
+            GuiTestUtils.limpiarYCargar(calificacion, "-1", robot);
+            Assert.assertFalse("Calificar y pagar deberia estar deshabilitado", calificarPagar.isEnabled());
+
+            // Caso 5: Mayor al limite superior
+            GuiTestUtils.limpiarYCargar(calificacion, "6", robot);
             Assert.assertFalse("Calificar y pagar deberia estar deshabilitado", calificarPagar.isEnabled());
 
         } catch (Exception e) {}

@@ -85,4 +85,24 @@ public class GuiTestUtils {
         }
     }
 
+    public static void limpiarJTextField(JTextField jtextfield, Robot robot) {
+        robot.delay(delay);
+        clickComponente(jtextfield, robot);
+        robot.delay(delay);
+        borraJTextField(jtextfield, robot);
+        robot.delay(delay);
+    }
+
+    public static void cargarJTextField(JTextField jtextfield, String texto, Robot robot) {
+        robot.delay(delay);
+        clickComponente(jtextfield, robot);
+        robot.delay(delay);
+        tipeaTexto(texto, robot);
+        robot.delay(delay);
+    }
+
+    public static void limpiarYCargar(JTextField jtextfield, String texto, Robot robot) {
+        limpiarJTextField(jtextfield, robot);
+        cargarJTextField(jtextfield, texto, robot);
+    }
 }

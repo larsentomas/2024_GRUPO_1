@@ -19,22 +19,27 @@ public class GuiTestEnabledDisabledLogIn {
     JButton login;
     JButton registrar;
 
-    public GuiTestEnabledDisabledLogIn () {
-        try {
-            robot = new Robot();
-        } catch (AWTException e) {
-        }
-    }
-
     @Before
     public void setUp() {
-        controlador = new Controlador();
+        try {
+            robot = new Robot();
+            controlador = new Controlador();
 
-        nombre_usuario = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.NOMBRE_USUARIO);
-        password = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PASSWORD);
-        login = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.LOGIN);
-        registrar = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.REGISTRAR);
+            nombre_usuario = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.NOMBRE_USUARIO);
+            password = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PASSWORD);
+            login = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.LOGIN);
+            registrar = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.REGISTRAR);
 
+            Assert.assertTrue("El campo nombre de usuario deberia estar vacio", nombre_usuario.getText().isEmpty());
+            Assert.assertTrue("El campo password deberia estar vacio", password.getText().isEmpty());
+
+        } catch (AWTException e) {}
+    }
+
+    @Test
+    public void testCamposVacios() {
+        robot.delay(GuiTestUtils.getDelay());
+        // Deberia estar todos los textField vacios
         Assert.assertTrue("El campo nombre de usuario deberia estar vacio", nombre_usuario.getText().isEmpty());
         Assert.assertTrue("El campo password deberia estar vacio", password.getText().isEmpty());
     }
@@ -48,9 +53,7 @@ public class GuiTestEnabledDisabledLogIn {
 
     @Test
     public void testLogSoloNombre() {
-        robot.delay(GuiTestUtils.getDelay());
-        GuiTestUtils.clickComponente(nombre_usuario, robot);
-        GuiTestUtils.tipeaTexto("franveron", robot);
+        GuiTestUtils.cargarJTextField(nombre_usuario, "a", robot);
 
         Assert.assertFalse("El boton de log in deberia estar deshabilitado", login.isEnabled());
         Assert.assertTrue("El boton de registrarse deberia estar habilitado", registrar.isEnabled());
@@ -58,9 +61,7 @@ public class GuiTestEnabledDisabledLogIn {
 
     @Test
     public void testLogSoloPass() {
-        robot.delay(GuiTestUtils.getDelay());
-        GuiTestUtils.clickComponente(password, robot);
-        GuiTestUtils.tipeaTexto("franveron", robot);
+        GuiTestUtils.cargarJTextField(password, "a", robot);
 
         Assert.assertFalse("El boton de log in deberia estar deshabilitado", login.isEnabled());
         Assert.assertTrue("El boton de registrarse deberia estar habilitado", registrar.isEnabled());
@@ -68,13 +69,8 @@ public class GuiTestEnabledDisabledLogIn {
 
     @Test
     public void testLogCorrecto() {
-        robot.delay(GuiTestUtils.getDelay());
-
-        GuiTestUtils.clickComponente(nombre_usuario, robot);
-        GuiTestUtils.tipeaTexto("franveron", robot);
-
-        GuiTestUtils.clickComponente(password, robot);
-        GuiTestUtils.tipeaTexto("mandarina123", robot);
+        GuiTestUtils.cargarJTextField(nombre_usuario, "a", robot);
+        GuiTestUtils.cargarJTextField(password, "a", robot);
 
         Assert.assertTrue("El boton de log in deberia estar habilitado", login.isEnabled());
         Assert.assertTrue("El boton de registrarse deberia estar habilitado", registrar.isEnabled());

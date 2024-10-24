@@ -51,6 +51,16 @@ public class GuiTestEnabledDisabledRegistro {
     }
 
     @Test
+    public void testCamposVacios() {
+        robot.delay(GuiTestUtils.getDelay());
+        // Deberia estar todo vacio
+        Assert.assertTrue("El campo nombre de usuario deberia estar vacio", nombre_usuario.getText().isEmpty());
+        Assert.assertTrue("El campo password deberia estar vacio", password.getText().isEmpty());
+        Assert.assertTrue("El campo confirmar password deberia estar vacio", passwordConfirm.getText().isEmpty());
+        Assert.assertTrue("El campo nombre deberia estar vacio", nombre.getText().isEmpty());
+    }
+
+    @Test
     public void testRegistroNada() {
         robot.delay(GuiTestUtils.getDelay());
         Assert.assertFalse("El boton de registrar deberia estar deshabilitado", registrar.isEnabled());
@@ -59,9 +69,7 @@ public class GuiTestEnabledDisabledRegistro {
 
     @Test
     public void testSoloUsuario() {
-        robot.delay(GuiTestUtils.getDelay());
-        GuiTestUtils.clickComponente(nombre_usuario, robot);
-        GuiTestUtils.tipeaTexto("franveron", robot);
+        GuiTestUtils.cargarJTextField(nombre_usuario, "a", robot);
 
         Assert.assertFalse("El boton de registrar deberia estar deshabilitado", registrar.isEnabled());
         Assert.assertTrue("El boton de cancelar deberia estar habilitado", cancelar.isEnabled());
@@ -69,9 +77,7 @@ public class GuiTestEnabledDisabledRegistro {
 
     @Test
     public void testSoloPass() {
-        robot.delay(GuiTestUtils.getDelay());
-        GuiTestUtils.clickComponente(password, robot);
-        GuiTestUtils.tipeaTexto("franveron", robot);
+        GuiTestUtils.cargarJTextField(password, "a", robot);
 
         Assert.assertFalse("El boton de registrar deberia estar deshabilitado", registrar.isEnabled());
         Assert.assertTrue("El boton de cancelar deberia estar habilitado", cancelar.isEnabled());
@@ -79,9 +85,7 @@ public class GuiTestEnabledDisabledRegistro {
 
     @Test
     public void testSoloConfirmPass() {
-        robot.delay(GuiTestUtils.getDelay());
-        GuiTestUtils.clickComponente(passwordConfirm, robot);
-        GuiTestUtils.tipeaTexto("franveron", robot);
+        GuiTestUtils.cargarJTextField(passwordConfirm, "a", robot);
 
         Assert.assertFalse("El boton de registrar deberia estar deshabilitado", registrar.isEnabled());
         Assert.assertTrue("El boton de cancelar deberia estar habilitado", cancelar.isEnabled());
@@ -89,9 +93,7 @@ public class GuiTestEnabledDisabledRegistro {
 
     @Test
     public void testSoloNombre() {
-        robot.delay(GuiTestUtils.getDelay());
-        GuiTestUtils.clickComponente(nombre, robot);
-        GuiTestUtils.tipeaTexto("franveron", robot);
+        GuiTestUtils.cargarJTextField(nombre, "a", robot);
 
         Assert.assertFalse("El boton de registrar deberia estar deshabilitado", registrar.isEnabled());
         Assert.assertTrue("El boton de cancelar deberia estar habilitado", cancelar.isEnabled());
@@ -99,21 +101,10 @@ public class GuiTestEnabledDisabledRegistro {
 
     @Test
     public void testUsuarioTodo() {
-        robot.delay(GuiTestUtils.getDelay());
-        GuiTestUtils.clickComponente(nombre_usuario, robot);
-        GuiTestUtils.tipeaTexto("franveron", robot);
-
-        robot.delay(GuiTestUtils.getDelay());
-        GuiTestUtils.clickComponente(password, robot);
-        GuiTestUtils.tipeaTexto("mandarina123", robot);
-
-        robot.delay(GuiTestUtils.getDelay());
-        GuiTestUtils.clickComponente(passwordConfirm, robot);
-        GuiTestUtils.tipeaTexto("mandarina123", robot);
-
-        robot.delay(GuiTestUtils.getDelay());
-        GuiTestUtils.clickComponente(nombre, robot);
-        GuiTestUtils.tipeaTexto("Francisco Veron", robot);
+        GuiTestUtils.cargarJTextField(nombre_usuario, "a", robot);
+        GuiTestUtils.cargarJTextField(password, "a", robot);
+        GuiTestUtils.cargarJTextField(passwordConfirm, "a", robot);
+        GuiTestUtils.cargarJTextField(nombre, "a", robot);
 
         Assert.assertTrue("El boton de registrar deberia estar habilitado", registrar.isEnabled());
         Assert.assertTrue("El boton de cancelar deberia estar habilitado", cancelar.isEnabled());
