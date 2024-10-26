@@ -116,12 +116,12 @@ public class GuiTestEnabledDisabledCliente {
     @Test
     public void testSinViaje() {
         robot.delay(GuiTestUtils.getDelay());
-        Assert.assertEquals("Panel de pedido y viaje deberia estar vacio", pedidosYViajes.getComponentCount(), 0);
+        Assert.assertEquals("Panel de pedido y viaje deberia estar vacio", pedidosYViajes.getText().length(), 0);
 
         Assert.assertFalse("Calificacion deberia estar deshabilitado", calificacion.isEnabled());
         Assert.assertFalse("Calificar y pagar deberia estar deshabilitado", calificarPagar.isEnabled());
         Assert.assertTrue("Valor viaje deberia estar habilitado", valorViaje.isEnabled());
-        //Assert.assertTrue("Valor de viaje deberia estar vacio", valorViaje.getText().isEmpty()); TODO: No se cumple y salta siempre error, por eso lo comento
+        Assert.assertTrue("Valor de viaje deberia estar vacio", valorViaje.getText().isEmpty()); // TODO: No se cumple y salta siempre error, por eso lo comento
 
         Assert.assertTrue("Cantidad de pasajeros deberia estar habilitado", cantPax.isEnabled());
         Assert.assertTrue("Cantidad de km deberia estar habilitado", cantKM.isEnabled());
@@ -204,7 +204,7 @@ public class GuiTestEnabledDisabledCliente {
             Assert.assertEquals(Optional.of(Double.valueOf(valorViaje.getText())), viaje.getValor()); // TODO: Chequear comparacion de doubles
 
             // Caso 1: Todo vacio, invalido
-            Assert.assertFalse("Calificar y pagar deberia estar deshabilitado", calificarPagar.isEnabled()); // porque esta vacio
+            Assert.assertFalse("Calificar y pagar deberia estar deshabilitado", calificarPagar.isEnabled());
 
             // Caso 2: limite superior de calificar, VALIDO
             GuiTestUtils.cargarJTextField(calificacion, "5", robot);

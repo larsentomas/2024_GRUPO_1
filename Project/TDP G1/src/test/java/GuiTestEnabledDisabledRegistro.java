@@ -24,29 +24,26 @@ public class GuiTestEnabledDisabledRegistro {
     JButton registrar;
     JButton cancelar;
 
-    public GuiTestEnabledDisabledRegistro() {
-        try {
-            robot = new Robot();
-        } catch (AWTException e) {
-        }
-    }
-
     @Before
     public void setUp() {
-        controlador = new Controlador();
+        try {
+            robot = new Robot();
+            controlador = new Controlador();
 
-        // Abro pagina registrarse
-        paginaRegistrarse = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.REGISTRAR);
-        robot.delay(GuiTestUtils.getDelay());
-        GuiTestUtils.clickComponente(paginaRegistrarse, robot);
+            // Abro pagina registrarse
+            paginaRegistrarse = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.REGISTRAR);
+            robot.delay(GuiTestUtils.getDelay());
+            GuiTestUtils.clickComponente(paginaRegistrarse, robot);
 
-        nombre_usuario = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.REG_USSER_NAME);
-        password = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.REG_PASSWORD);
-        passwordConfirm = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.REG_CONFIRM_PASSWORD);
-        nombre = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.REG_REAL_NAME);
+            nombre_usuario = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.REG_USSER_NAME);
+            password = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.REG_PASSWORD);
+            passwordConfirm = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.REG_CONFIRM_PASSWORD);
+            nombre = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.REG_REAL_NAME);
 
-        registrar = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.REG_BUTTON_REGISTRAR);
-        cancelar = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.REG_BUTTON_CANCELAR);
+            registrar = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.REG_BUTTON_REGISTRAR);
+            cancelar = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.REG_BUTTON_CANCELAR);
+        } catch (AWTException e) {
+        }
 
     }
 

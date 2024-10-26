@@ -1,17 +1,12 @@
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Optional;
-
 import controlador.Controlador;
-import excepciones.*;
+import excepciones.UsuarioYaExisteException;
 import modeloDatos.*;
 import modeloNegocio.Empresa;
 import org.junit.After;
 import org.junit.Assert;
 import util.Constantes;
 
-import org.junit.BeforeClass;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -127,7 +122,7 @@ public class GuiTestEnabledDisabledAdmin {
         Assert.assertTrue("Campo cantidad de plazas deberia estar vacio", cantPlazas.getText().isEmpty());
         Assert.assertTrue("Campo puntaje de chofer deberia estar vacio", puntajeChofer.getText().isEmpty());
         Assert.assertTrue("Campo sueldo de chofer deberia estar vacio", sueldoChofer.getText().isEmpty());
-        //Assert.assertTrue("Campo sueldos totales deberia estar vacio", totalSueldos.getText().isEmpty()); TODO: Si no hay choferes es 0, nunca podria estar vacio
+        //Assert.assertTrue("Campo sueldos totales deberia estar vacio", totalSueldos.getText().isEmpty()); // TODO: Si no hay choferes es 0, nunca podria estar vacio
     }
 
     @Test
@@ -247,7 +242,7 @@ public class GuiTestEnabledDisabledAdmin {
         // Caso 5: Todo bien menos la cantidad de plazas (menor a limite inferior), INVALIDO
         GuiTestUtils.limpiarYCargar(patenteVehiculo, "a", robot);
         GuiTestUtils.limpiarYCargar(cantPlazas, "0", robot);
-        // Assert.assertFalse("Nuevo vehiculo deberia estar deshabilitado", nuevoVehiculo.isEnabled()); TODO: Salta error, incumple el contrato,no deberia permitir 0 plazas
+        Assert.assertFalse("Nuevo vehiculo deberia estar deshabilitado", nuevoVehiculo.isEnabled()); // TODO: Salta error, incumple el contrato,no deberia permitir 0 plazas
 
         // Caso 6: Todo bien menos la cantidad de plazas (mayor a limite superior), INVALIDO
         GuiTestUtils.limpiarYCargar(cantPlazas, "5", robot);
@@ -290,7 +285,6 @@ public class GuiTestEnabledDisabledAdmin {
         Assert.assertFalse("Nuevo vehiculo deberia estar deshabilitado", nuevoVehiculo.isEnabled());
     }
 
-
     @Test
     public void testGestionPedidos() {
         robot.delay(GuiTestUtils.getDelay());
@@ -323,16 +317,16 @@ public class GuiTestEnabledDisabledAdmin {
         Assert.assertFalse("Nuevo viaje deberia estar deshabilitado", nuevoViaje.isEnabled());
 
         // Selecciono un pedido
-        pedidosPendientes.setSelectedIndex(0); // TODO: Consultar si es correcto
+        pedidosPendientes.setSelectedIndex(0);
         robot.delay(GuiTestUtils.getDelay());
 
         Assert.assertFalse("Nuevo viaje deberia estar deshabilitado", nuevoViaje.isEnabled());
-        Assert.assertEquals("Deberia aparecer solamente el vehiculo que agregue", 1, vehiculosLibres.getComponentCount());
+        Assert.assertEquals("Deberia aparecer solamente el vehiculo que agregue", 1, vehiculosLibres.getModel().getSize());
 
         // Selecciono chofer y vehiculo
-        vehiculosLibres.setSelectedIndex(0); // TODO: Consultar si es correcto
+        vehiculosLibres.setSelectedIndex(0);
         robot.delay(GuiTestUtils.getDelay());
-        choferesLibres.setSelectedIndex(0); // TODO: Consultar si es correcto
+        choferesLibres.setSelectedIndex(0);
 
         Assert.assertTrue("Nuevo viaje deberia estar habilitado", nuevoViaje.isEnabled());
     }
