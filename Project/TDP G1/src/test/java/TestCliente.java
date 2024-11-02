@@ -11,14 +11,14 @@ public class TestCliente {
 
     @Before
     public void setUp() {
-        c = new Cliente("maite", "maite123", "Maite Nigro");
+        c = new Cliente("a", "b", "c");
     }
 
     @Test
     public void test() {
-        Assert.assertEquals(c.getNombreUsuario(), "maite");
-        Assert.assertEquals(c.getPass(), "maite123");
-        Assert.assertEquals(c.getNombreReal(), "Maite Nigro");
+        Assert.assertEquals(c.getNombreUsuario(), "a");
+        Assert.assertEquals(c.getPass(), "b");
+        Assert.assertEquals(c.getNombreReal(), "c");
     }
 
 }

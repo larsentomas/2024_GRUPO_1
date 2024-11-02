@@ -5,9 +5,9 @@ import org.junit.Test;
 public class TestChoferTemporario {
 
     @Test
-    public void testChofer() {
-        ChoferTemporario c = new ChoferTemporario("12345678", "Maite Nigro"); // NO SE PUEDE HACER, ES ABSTRACTO. COMO SE TESTEA ENTONCES
-        Assert.assertEquals(c.getDni(), "12345678");
-        Assert.assertEquals(c.getNombre(), "Maite Nigro");
+    public void testChoferTemporario() {
+        ChoferTemporario c = new ChoferTemporario("a", "b");
+        Assert.assertEquals(c.getDni(), "a");
+        Assert.assertEquals(c.getNombre(), "b");
     }
 }
