@@ -10,29 +10,48 @@ import modeloDatos.Pedido;
 
 public class TestAuto {
     Auto auto;
+    Cliente cliente1;
 
     @Before
     public void setUp() {
-        Auto auto = new Auto("AAA123", 4, false);
+        auto = new Auto("AAA000", 4, false);
+        cliente1 = new Cliente("franveron", "mandarina123", "Francisco Veron");
     }
 
     @Test
-    public void testAuto() {
-        Assert.assertEquals(auto.getPatente(), "AAA123");
+    public void testAutoPatenteLarga() {
+        Assert.assertEquals(auto.getPatente(), "AAA000");
         Assert.assertEquals(auto.getCantidadPlazas(), 4);
         Assert.assertFalse(auto.isMascota());
     }
 
     @Test
-    public void testgetPuntajePedido() {
-        Cliente cliente = new Cliente("franveron", "mandarina123", "Francisco Veron");
-        Pedido pedido1 = new Pedido(cliente, 2, false, false, 6, Constantes.ZONA_STANDARD );
-        Pedido pedido2 = new Pedido(cliente, 2, false, true, 6, Constantes.ZONA_STANDARD );
-        Pedido pedido3 = new Pedido(cliente, 5, false, false, 6, Constantes.ZONA_STANDARD );
+    public void testAutoPatenteVacia() {
+        Auto auto1 = new Auto("", 1, true);
+        Assert.assertEquals(auto1.getPatente(), "");
+        Assert.assertEquals(auto1.getCantidadPlazas(), 1);
+        Assert.assertTrue(auto1.isMascota());
+    }
 
-        Assert.assertEquals((Integer) 60, auto.getPuntajePedido(pedido1)); // ESTA DEVOLVIENDO 80 COMO SI NO TUVIIERA EN CUENTA EL BAUL
+    @Test
+    public void testgetPuntajePedidoConBaul() {
+        Pedido pedido2 = new Pedido(cliente1, 2, false, true, 6, Constantes.ZONA_STANDARD );
+
         Assert.assertEquals((Integer) 80, auto.getPuntajePedido(pedido2));
+    }
+
+    @Test
+    public void testgetPuntajePedidoSinBaul() {
+        Pedido pedido1 = new Pedido(cliente1, 2, false, false, 6, Constantes.ZONA_STANDARD );
+
+        Assert.assertEquals((Integer) 60, auto.getPuntajePedido(pedido1)); // TODO: Incumple el contrato, devuelve 80 no tiene en cuenta el baul
+    }
+
+    @Test
+    public void testgetPuntajePedidoInvalido() {
+        Pedido pedido3 = new Pedido(cliente1, 5, false, false, 6, Constantes.ZONA_STANDARD );
+
         Assert.assertNull(auto.getPuntajePedido(pedido3));
     }
-    
+
 }
