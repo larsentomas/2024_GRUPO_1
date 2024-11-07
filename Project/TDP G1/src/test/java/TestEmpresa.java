@@ -10,6 +10,7 @@ import util.Constantes;
 import modeloDatos.Auto;
 import modeloDatos.Cliente;
 import modeloDatos.Pedido;
+import util.Mensajes;
 
 
 public class TestEmpresa {
@@ -50,7 +51,11 @@ public class TestEmpresa {
 
             emp.agregarChofer(chofer);
             Assert.fail("Deberia haber lanzado la excepcion ChoferRepetidoException");
-        } catch (ChoferRepetidoException e) {}
+        } catch (ChoferRepetidoException e) {
+            Assert.assertEquals(e.getMessage(), Mensajes.CHOFER_YA_REGISTRADO.getValor());
+            Assert.assertEquals(e.getDniPrentendido(), chofer.getDni());
+            Assert.assertEquals(e.getChoferExistente(), emp.getChoferes().get(chofer.getDni()));
+        }
     }
 
     @Test
@@ -62,6 +67,8 @@ public class TestEmpresa {
             emp.agregarCliente("a", "b", "c");
             Assert.fail("Deberia haber lanzado la excepcion UsuarioYaExisteException");
         } catch (UsuarioYaExisteException e) {
+            Assert.assertEquals(e.getMessage(), Mensajes.USUARIO_REPETIDO.getValor());
+            Assert.assertEquals(e.getUsuarioPretendido(), "a");
         }
     }
 
@@ -70,7 +77,11 @@ public class TestEmpresa {
         try {
             emp.agregarPedido(pedido1);
             Assert.fail("Deberia haber lanzado la excepcion SinVehiculoParaPedidoException");
-        } catch (Exception e){}
+        } catch(SinVehiculoParaPedidoException e) {
+            Assert.assertEquals(e.getMessage(), Mensajes.SIN_VEHICULO_PARA_PEDIDO.getValor());
+            Assert.assertEquals(e.getPedido(), pedido1);
+        } catch (Exception e){
+        }
     }
 
     @Test
@@ -93,6 +104,8 @@ public class TestEmpresa {
             emp.agregarPedido(pedido);
 
             Assert.fail("Deberia haber lanzado la excepcion ClienteConViajePendienteException"); // TODO: Fallo
+        } catch(ClienteConViajePendienteException e) {
+            Assert.assertEquals(e.getMessage(), Mensajes.CLIENTE_CON_VIAJE_PENDIENTE.getValor());
         } catch (Exception e) {}
     }
 
@@ -111,6 +124,8 @@ public class TestEmpresa {
             emp.agregarPedido(pedido1);
             emp.agregarPedido(pedido);
             Assert.fail("Deberia haber lanzado la excepcion ClienteConPedidoPendienteException");
+        } catch(ClienteConPedidoPendienteException e) {
+            Assert.assertEquals(e.getMessage(), Mensajes.CLIENTE_CON_PEDIDO_PENDIENTE.getValor());
         } catch (Exception e) {}
 
     }
@@ -125,6 +140,8 @@ public class TestEmpresa {
             emp.agregarPedido(pedido);
             Assert.fail("Deberia haber lanzado la excepcion ClienteNoExisteException");
 
+        } catch (ClienteNoExisteException e) {
+            Assert.assertEquals(e.getMessage(), Mensajes.CLIENTE_NO_EXISTE.getValor());
         } catch (Exception e) {}
     }
 
@@ -166,6 +183,9 @@ public class TestEmpresa {
             emp.agregarVehiculo(auto);
             Assert.fail("Deberia haber arrojado excepcion VehiculoRepetidoException");
         } catch (VehiculoRepetidoException e) {
+            Assert.assertEquals(e.getMessage(), Mensajes.VEHICULO_YA_REGISTRADO.getValor());
+            Assert.assertEquals(e.getVehiculoExistente(), auto);
+            Assert.assertEquals(e.getPatentePrentendida(), auto.getPatente());
         }
     }
 
@@ -176,6 +196,9 @@ public class TestEmpresa {
             emp.agregarVehiculo(auto);
             emp.crearViaje(pedido1, chofer, auto);
             Assert.fail("Deberia haber arrojado excepcion PedidoInexistenteException");
+        } catch(PedidoInexistenteException e) {
+            Assert.assertEquals(e.getMessage(), Mensajes.PEDIDO_INEXISTENTE.getValor());
+            Assert.assertEquals(e.getPedido(), pedido1);
         } catch (Exception e) {}
     }
 
@@ -186,6 +209,9 @@ public class TestEmpresa {
             emp.agregarPedido(pedido1);
             emp.crearViaje(pedido1, chofer, auto);
             Assert.fail("Deberia haber arrojado excepcion ChoferNoDisponibleException");
+        } catch (ChoferNoDisponibleException e) {
+            Assert.assertEquals(e.getMessage(), Mensajes.CHOFER_NO_DISPONIBLE.getValor());
+            Assert.assertEquals(e.getChofer(), chofer);
         } catch (Exception e) {}
     }
 
@@ -196,19 +222,25 @@ public class TestEmpresa {
             emp.agregarPedido(pedido1);
             emp.crearViaje(pedido1, chofer, auto);
             Assert.fail("Deberia haber arrojado excepcion VehiculoNoDisponibleException");
+        } catch (VehiculoNoDisponibleException e) {
+            Assert.assertEquals(e.getMessage(), Mensajes.VEHICULO_NO_DISPONIBLE.getValor());
+            Assert.assertEquals(e.getVehiculo(), auto);
         } catch (Exception e) {}
     }
 
     @Test
     public void testCrearViajeVehiculoNoValido() {
+        Moto moto = new Moto("AAA123");
         try {
-            Moto moto = new Moto("AAA123");
             emp.agregarChofer(chofer);
             emp.agregarVehiculo(auto);
             emp.agregarVehiculo(moto);
             emp.agregarPedido(pedido1);
             emp.crearViaje(pedido1, chofer, moto);
             Assert.fail("Deberia haber arrojado excepcion VehiculoNoValidoException");
+        } catch (VehiculoNoValidoException e) {
+            Assert.assertEquals(e.getMessage(), Mensajes.VEHICULO_NO_VALIDO.getValor());
+            Assert.assertEquals(e.getVehiculo(), moto);
         } catch (Exception e) {}
     }
 
@@ -230,8 +262,9 @@ public class TestEmpresa {
             emp.crearViaje(pedido2, chofer2, auto2);
 
             Assert.fail("Deberia haber arrojado excepcion ClienteConViajePendienteException");
-        } catch (Exception e) {
-        }
+        } catch (ClienteConViajePendienteException e) {
+            Assert.assertEquals(e.getMessage(), Mensajes.CLIENTE_CON_VIAJE_PENDIENTE.getValor());
+        } catch (Exception e) {}
     }
 
     @Test
@@ -289,7 +322,9 @@ public class TestEmpresa {
             emp.pagarYFinalizarViaje(3);
 
             Assert.fail("Deberia haber lanzado excepcion ClienteSinViajePendienteException");
-        } catch(UsuarioNoExisteException | PasswordErroneaException | ChoferRepetidoException | VehiculoRepetidoException | ClienteNoExisteException | ClienteConViajePendienteException | SinVehiculoParaPedidoException | ClienteConPedidoPendienteException | ClienteSinViajePendienteException e) {}
+        } catch (ClienteSinViajePendienteException e) {
+            Assert.assertEquals(e.getMessage(), Mensajes.CLIENTE_SIN_VIAJE_PENDIENTE.getValor());
+        } catch (Exception e) {}
     }
 
     @Test
@@ -297,7 +332,10 @@ public class TestEmpresa {
         try {
             emp.login("pepe000", "contrasenia");
             Assert.fail("Deberia haber lanzado la excepcion UsuarioNoExisteException");
-        } catch (UsuarioNoExisteException | PasswordErroneaException e) {}
+        } catch (UsuarioNoExisteException e) {
+            Assert.assertEquals(e.getMessage(), Mensajes.USUARIO_DESCONOCIDO.getValor());
+            Assert.assertEquals(e.getUsuarioPretendido(), "pepe000");
+        } catch (PasswordErroneaException e) {}
     }
 
     @Test
@@ -305,7 +343,11 @@ public class TestEmpresa {
         try {
             emp.login("pepe123", "contraseniaaa");
             Assert.fail("Deberia haber lanzado la excepcion PasswordErroneaException");
-        } catch (PasswordErroneaException | UsuarioNoExisteException e) {}
+        } catch (PasswordErroneaException e) {
+            Assert.assertEquals(e.getMessage(), Mensajes.PASS_ERRONEO.getValor());
+            Assert.assertEquals(e.getPasswordPretendida(), "contraseniaaa");
+            Assert.assertEquals(e.getUsuarioPretendido(), "pepe123");
+        } catch (UsuarioNoExisteException e) {}
     }
 
     @Test
@@ -350,11 +392,20 @@ public class TestEmpresa {
     }
 
     @Test
+    public void testCalificacionDeChoferVacio() {
+        try {
+            emp.agregarChofer(chofer);
+            emp.calificacionDeChofer(chofer);
+            Assert.fail("Deberia haber arrojado excepcion SinViajesException");
+        } catch (SinViajesException e) {
+            Assert.assertEquals(e.getMessage(), Mensajes.CHOFER_SIN_VIAJES.getValor());
+        } catch (ChoferRepetidoException e) {}
+    }
+
+    @Test
     public void testCalificacionDeChofer() {
         try {
             emp.agregarChofer(chofer);
-
-            Assert.assertThrows(SinViajesException.class, () -> emp.calificacionDeChofer(chofer)); //TODO: No lanza excepcion, simplemente devuelve 0
 
             emp.agregarVehiculo(auto);
             emp.agregarPedido(pedido1);

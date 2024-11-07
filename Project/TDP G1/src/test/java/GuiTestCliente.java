@@ -107,8 +107,7 @@ public class GuiTestCliente {
             Assert.assertFalse("El campo baul deberia estar desmarcado", baul.isSelected());
             Assert.assertFalse("El campo mascota deberia estar desmarcado", mascota.isSelected());
 
-        } catch (VehiculoRepetidoException ex) {
-        }
+        } catch (VehiculoRepetidoException ex) {}
     }
 
     @Test

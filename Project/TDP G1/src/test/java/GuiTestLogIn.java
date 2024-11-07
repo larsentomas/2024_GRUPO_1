@@ -61,29 +61,33 @@ public class GuiTestLogIn {
     }
 
     @Test
-    public void TestLogInPassAdminCorrecto() {
+    public void TestLogInPassCorrectoAdmin() {
         GuiTestUtils.cargarJTextField(nombre_usuario, "admin", robot);
         GuiTestUtils.cargarJTextField(password, "admin", robot);
         GuiTestUtils.clickComponente(login, robot);
 
-        // TODO: Como se testea que paso a ventana admin?
+        JPanel panelLogIn = (JPanel) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PANEL_LOGIN);
+        JPanel panelLoginAdmin = (JPanel) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PANEL_ADMINISTRADOR);
+        Assert.assertFalse("El panel login deberia estar escondido", panelLogIn.isVisible());
+        Assert.assertTrue("El panel admin deberia estar visible", panelLoginAdmin.isVisible());
     }
 
     @Test
-    public void TestLogInPassClienteCorrecto() {
-        String usuario = "pepe1";
-        String pass = "mandarina123";
-
+    public void TestLogInPassCorrectoCliente() {
         try {
-            emp.agregarCliente(usuario, pass, "Pedro");
-
-            GuiTestUtils.cargarJTextField(nombre_usuario, usuario, robot);
-            GuiTestUtils.cargarJTextField(password, pass, robot);
+            Empresa emp = Empresa.getInstance();
+            emp.agregarCliente("pepe1", "mandarina123", "Pedro");
+            GuiTestUtils.cargarJTextField(nombre_usuario, "pepe1", robot);
+            GuiTestUtils.cargarJTextField(password, "mandarina123", robot);
             GuiTestUtils.clickComponente(login, robot);
 
-            // TODO: Como se testea que paso a ventana cliente?
+            JPanel panelLogIn = (JPanel) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PANEL_LOGIN);
+            JPanel panelLoginCliente = (JPanel) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PANEL_CLIENTE);
+            Assert.assertFalse("El panel login deberia estar escondido", panelLogIn.isVisible());
+            Assert.assertTrue("El panel cliente deberia estar visible", panelLoginCliente.isVisible());
         } catch (UsuarioYaExisteException e) {}
     }
+
 
     @After
     public void tearDown() {

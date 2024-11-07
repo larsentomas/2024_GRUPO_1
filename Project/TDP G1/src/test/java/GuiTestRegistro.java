@@ -64,7 +64,12 @@ public class GuiTestRegistro {
         GuiTestUtils.clickComponente(registrar, robot);
 
         Assert.assertTrue("El usuario deberia estar registrado", e.getClientes().containsKey("a"));
-        // TODO: Como testeo que cambio de pagina?
+
+        JPanel panelRegistro = (JPanel) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PANEL_REGISTRO);
+        JPanel panelLogIn = (JPanel) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PANEL_LOGIN);
+
+        Assert.assertFalse("El panel de registro deberia estar oculto", panelRegistro.isVisible());
+        Assert.assertTrue("El panel de login deberia estar visible", panelLogIn.isVisible());
     }
 
     @Test
