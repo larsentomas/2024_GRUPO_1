@@ -20,7 +20,6 @@ public class GuiTestLogIn {
     JTextField nombre_usuario;
     JTextField password;
     JButton login;
-    JButton registrar;
 
     FalsoOptionPane panel = new FalsoOptionPane();
 
@@ -62,29 +61,37 @@ public class GuiTestLogIn {
 
     @Test
     public void TestLogInPassCorrectoAdmin() {
+        JPanel panelLogIn = (JPanel) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PANEL_LOGIN);
         GuiTestUtils.cargarJTextField(nombre_usuario, "admin", robot);
         GuiTestUtils.cargarJTextField(password, "admin", robot);
         GuiTestUtils.clickComponente(login, robot);
 
-        JPanel panelLogIn = (JPanel) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PANEL_LOGIN);
-        JPanel panelLoginAdmin = (JPanel) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PANEL_ADMINISTRADOR);
-        Assert.assertFalse("El panel login deberia estar escondido", panelLogIn.isVisible());
-        Assert.assertTrue("El panel admin deberia estar visible", panelLoginAdmin.isVisible());
+        try {
+            JPanel panelLoginAdmin = (JPanel) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PANEL_ADMINISTRADOR);
+            Assert.assertTrue("El panel admin deberia estar visible", panelLoginAdmin.isShowing());
+            Assert.assertFalse("El panel login deberia estar escondido", panelLogIn.isShowing());
+        } catch (NullPointerException e) {
+            Assert.fail("No se cambio a el panel de admin");
+        }
     }
 
     @Test
     public void TestLogInPassCorrectoCliente() {
         try {
+            JPanel panelLogIn = (JPanel) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PANEL_LOGIN);
             Empresa emp = Empresa.getInstance();
             emp.agregarCliente("pepe1", "mandarina123", "Pedro");
             GuiTestUtils.cargarJTextField(nombre_usuario, "pepe1", robot);
             GuiTestUtils.cargarJTextField(password, "mandarina123", robot);
             GuiTestUtils.clickComponente(login, robot);
 
-            JPanel panelLogIn = (JPanel) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PANEL_LOGIN);
-            JPanel panelLoginCliente = (JPanel) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PANEL_CLIENTE);
-            Assert.assertFalse("El panel login deberia estar escondido", panelLogIn.isVisible());
-            Assert.assertTrue("El panel cliente deberia estar visible", panelLoginCliente.isVisible());
+            try {
+                JPanel panelLoginCliente = (JPanel) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PANEL_CLIENTE);
+                Assert.assertFalse("El panel login deberia estar escondido", panelLogIn.isShowing());
+                Assert.assertTrue("El panel cliente deberia estar visible", panelLoginCliente.isShowing());
+            } catch (NullPointerException e) {
+                Assert.fail("No se cambio a el panel de cliente");
+            }
         } catch (UsuarioYaExisteException e) {}
     }
 

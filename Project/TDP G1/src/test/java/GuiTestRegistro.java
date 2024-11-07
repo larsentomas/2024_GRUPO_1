@@ -45,6 +45,8 @@ public class GuiTestRegistro {
             robot.delay(GuiTestUtils.getDelay());
             GuiTestUtils.clickComponente(paginaRegistrarse, robot);
 
+            robot.delay(GuiTestUtils.getDelay());
+
             nombre_usuario = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.REG_USSER_NAME);
             password = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.REG_PASSWORD);
             passwordConfirm = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.REG_CONFIRM_PASSWORD);
@@ -57,6 +59,7 @@ public class GuiTestRegistro {
 
     @Test
     public void testUsuarioDisponible() {
+        JPanel panelRegistro = (JPanel) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PANEL_REGISTRO);
         GuiTestUtils.cargarJTextField(nombre_usuario, "a", robot);
         GuiTestUtils.cargarJTextField(password, "a", robot);
         GuiTestUtils.cargarJTextField(passwordConfirm, "a", robot);
@@ -65,11 +68,14 @@ public class GuiTestRegistro {
 
         Assert.assertTrue("El usuario deberia estar registrado", e.getClientes().containsKey("a"));
 
-        JPanel panelRegistro = (JPanel) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PANEL_REGISTRO);
-        JPanel panelLogIn = (JPanel) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PANEL_LOGIN);
-
-        Assert.assertFalse("El panel de registro deberia estar oculto", panelRegistro.isVisible());
-        Assert.assertTrue("El panel de login deberia estar visible", panelLogIn.isVisible());
+        try {
+            robot.delay(GuiTestUtils.getDelay());
+            JPanel panelLogIn = (JPanel) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PANEL_LOGIN);
+            Assert.assertTrue("El panel de login deberia estar visible", panelLogIn.isShowing());
+            Assert.assertFalse("El panel de registro deberia estar oculto", panelRegistro.isShowing());
+        } catch (NullPointerException e) {
+            Assert.fail("No se cambio a el panel de login");
+        }
     }
 
     @Test

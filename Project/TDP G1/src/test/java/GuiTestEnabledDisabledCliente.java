@@ -21,13 +21,10 @@ public class GuiTestEnabledDisabledCliente {
     static String password = "mandarina123";
     static String nombre = "Francisco Veron";
 
-    static Robot robot;
-    static Controlador controlador;
-    static Empresa e;
-    static Cliente cliente;
-    static Pedido pedido1;
-    static Chofer chofer;
-    static Vehiculo auto;
+    Robot robot;
+    Controlador controlador;
+    Empresa e;
+    Cliente cliente;
 
     JTextArea pedidosYViajes;
 
@@ -47,60 +44,56 @@ public class GuiTestEnabledDisabledCliente {
     JButton nuevoPedido;
     JButton cerrarSesion;
 
-    @BeforeClass
-    public static void setUpClass() {
+
+    @Before
+    public void setUp() {
         try {
             robot = new Robot();
             e = Empresa.getInstance();
             e.agregarCliente(usuario, password, nombre);
             cliente = e.getClientes().get(usuario);
-            e.agregarVehiculo(new Auto("AAA123", 4, true));
-            e.agregarChofer(new ChoferPermanente("12345678", "Juan Perez", 2000, 2));
 
-            pedido1 = new Pedido(cliente, 2, false, false, 2, Constantes.ZONA_STANDARD);
-            chofer = e.getChoferes().get("12345678");
-            auto = e.getVehiculos().get("AAA123");
-        } catch (Exception e) {}
-    }
+            // Por cada test se abre una nueva ventana, por lo que se deben re definir los botones y textos
+            controlador = new Controlador();
 
-    @Before
-    public void setUp() {
-        // Por cada test se abre una nueva ventana, por lo que se deben re definir los botones y textos
-        controlador = new Controlador();
+            JButton login = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.LOGIN);
 
-        JButton login = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.LOGIN);
+            JTextField nombre_usuario = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.NOMBRE_USUARIO);
+            JTextField password_usuario = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PASSWORD);
 
-        JTextField nombre_usuario = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.NOMBRE_USUARIO);
-        JTextField password_usuario = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PASSWORD);
+            // Logueo usuario
+            GuiTestUtils.cargarJTextField(nombre_usuario, usuario, robot);
+            GuiTestUtils.cargarJTextField(password_usuario, password, robot);
+            GuiTestUtils.clickComponente(login, robot);
+            robot.delay(GuiTestUtils.getDelay());
 
-        // Logueo usuario
-        GuiTestUtils.cargarJTextField(nombre_usuario, usuario, robot);
-        GuiTestUtils.cargarJTextField(password_usuario, password, robot);
-        GuiTestUtils.clickComponente(login, robot);
-        robot.delay(GuiTestUtils.getDelay());
+            pedidosYViajes = (JTextArea) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PEDIDO_O_VIAJE_ACTUAL);
+            calificacion = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.CALIFICACION_DE_VIAJE);
+            valorViaje = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.VALOR_VIAJE);
+            cantPax = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.CANT_PAX);
+            cantKM = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.CANT_KM);
 
-        pedidosYViajes = (JTextArea) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PEDIDO_O_VIAJE_ACTUAL);
-        calificacion = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.CALIFICACION_DE_VIAJE);
-        valorViaje = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.VALOR_VIAJE);
-        cantPax = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.CANT_PAX);
-        cantKM = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.CANT_KM);
+            zonaEstandar = (JRadioButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.ZONA_STANDARD);
+            zonaSinAsfaltar = (JRadioButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.ZONA_SIN_ASFALTAR);
+            zonaPeligrosa = (JRadioButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.ZONA_PELIGROSA);
 
-        zonaEstandar = (JRadioButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.ZONA_STANDARD);
-        zonaSinAsfaltar = (JRadioButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.ZONA_SIN_ASFALTAR);
-        zonaPeligrosa = (JRadioButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.ZONA_PELIGROSA);
+            baul = (JCheckBox) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.CHECK_BAUL);
+            mascota = (JCheckBox) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.CHECK_MASCOTA);
 
-        baul = (JCheckBox) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.CHECK_BAUL);
-        mascota = (JCheckBox) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.CHECK_MASCOTA);
+            calificarPagar = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.CALIFICAR_PAGAR);
+            nuevoPedido = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.NUEVO_PEDIDO);
+            cerrarSesion = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.CERRAR_SESION_CLIENTE);
 
-        calificarPagar = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.CALIFICAR_PAGAR);
-        nuevoPedido = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.NUEVO_PEDIDO);
-        cerrarSesion = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.CERRAR_SESION_CLIENTE);
-
-        // Reseteo pedidos y viajes
-        e.getPedidos().clear();
-        e.getViajesTerminados().clear();
-        e.getViajesIniciados().clear();
-        controlador.getVista().actualizar();
+            // Reseteo pedidos y viajes
+            e.getPedidos().clear();
+            e.getViajesTerminados().clear();
+            e.getViajesIniciados().clear();
+            e.getChoferes().clear();
+            e.getVehiculos().clear();
+            e.getClientes().clear();
+            controlador.getVista().actualizar();
+        } catch (Exception ex) {
+        }
     }
 
     @Test
@@ -116,12 +109,14 @@ public class GuiTestEnabledDisabledCliente {
     @Test
     public void testSinViaje() {
         robot.delay(GuiTestUtils.getDelay());
+        controlador.getVista().actualizar();
+        robot.delay(5000);
         Assert.assertEquals("Panel de pedido y viaje deberia estar vacio", pedidosYViajes.getText().length(), 0);
 
         Assert.assertFalse("Calificacion deberia estar deshabilitado", calificacion.isEnabled());
         Assert.assertFalse("Calificar y pagar deberia estar deshabilitado", calificarPagar.isEnabled());
         Assert.assertTrue("Valor viaje deberia estar habilitado", valorViaje.isEnabled());
-        Assert.assertTrue("Valor de viaje deberia estar vacio", valorViaje.getText().isEmpty()); // TODO: No se cumple y salta siempre error, por eso lo comento
+        Assert.assertTrue("Valor de viaje deberia estar vacio", valorViaje.getText().isEmpty());
 
         Assert.assertTrue("Cantidad de pasajeros deberia estar habilitado", cantPax.isEnabled());
         Assert.assertTrue("Cantidad de km deberia estar habilitado", cantKM.isEnabled());
@@ -157,6 +152,7 @@ public class GuiTestEnabledDisabledCliente {
     @Test
     public void testConPedido() {
         try {
+            Pedido pedido1 = new Pedido(cliente, 2, false, false, 2, Constantes.ZONA_STANDARD);
             // Hacer un pedido
             e.agregarPedido(pedido1);
             controlador.getVista().actualizar();
@@ -182,6 +178,11 @@ public class GuiTestEnabledDisabledCliente {
     @Test
     public void testConViaje() {
         try {
+            Pedido pedido1 = new Pedido(cliente, 2, false, false, 2, Constantes.ZONA_STANDARD);
+            Auto auto = new Auto("AAA123", 4, true);
+            Chofer chofer = new ChoferPermanente("12345678", "Juan Perez", 2000, 2);
+            e.agregarChofer(chofer);
+            e.agregarVehiculo(auto);
             // Cargo viaje
             e.agregarPedido(pedido1);
             e.crearViaje(pedido1, chofer, auto);
@@ -201,7 +202,9 @@ public class GuiTestEnabledDisabledCliente {
             Assert.assertFalse("Nuevo pedido deberia estar deshabilitado", nuevoPedido.isEnabled());
 
             Assert.assertTrue("Calificacion deberia estar habilitado", calificacion.isEnabled());
-            Assert.assertEquals(Optional.of(Double.valueOf(valorViaje.getText())), viaje.getValor()); // TODO: Chequear comparacion de doubles
+
+            String calificacionEsperada = String.valueOf(viaje.getValor());
+            Assert.assertEquals(calificacionEsperada, valorViaje.getText());
 
             // Caso 1: Todo vacio, invalido
             Assert.assertFalse("Calificar y pagar deberia estar deshabilitado", calificarPagar.isEnabled());

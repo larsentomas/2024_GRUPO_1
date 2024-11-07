@@ -122,8 +122,7 @@ public class GuiTestEnabledDisabledAdmin {
         Assert.assertTrue("Campo cantidad de plazas deberia estar vacio", cantPlazas.getText().isEmpty());
         Assert.assertTrue("Campo puntaje de chofer deberia estar vacio", puntajeChofer.getText().isEmpty());
         Assert.assertTrue("Campo sueldo de chofer deberia estar vacio", sueldoChofer.getText().isEmpty());
-        //Assert.assertTrue("Campo sueldos totales deberia estar vacio", totalSueldos.getText().isEmpty()); // TODO: Si no hay choferes es 0, nunca podria estar vacio
-    }
+ }
 
     @Test
     public void testRegistroChoferTemporario() {

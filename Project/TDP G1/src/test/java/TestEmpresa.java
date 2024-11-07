@@ -99,8 +99,6 @@ public class TestEmpresa {
             emp.agregarPedido(pedido1);
             emp.crearViaje(pedido1, chofer, auto);
 
-            System.out.println(emp.getViajesIniciados().toString());
-
             emp.agregarPedido(pedido);
 
             Assert.fail("Deberia haber lanzado la excepcion ClienteConViajePendienteException"); // TODO: Fallo
@@ -418,6 +416,8 @@ public class TestEmpresa {
             emp.crearViaje(pedido2, chofer, auto);
             emp.login("pepe123", "mandarina123");
             emp.pagarYFinalizarViaje(0);
+
+            System.out.println(emp.getViajesTerminados());
 
             Assert.assertEquals(2.5, emp.calificacionDeChofer(chofer), 0.0000000001);
         } catch (Exception e) {}
