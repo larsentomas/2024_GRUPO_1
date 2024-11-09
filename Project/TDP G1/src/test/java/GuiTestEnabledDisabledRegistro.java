@@ -42,9 +42,7 @@ public class GuiTestEnabledDisabledRegistro {
 
             registrar = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.REG_BUTTON_REGISTRAR);
             cancelar = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.REG_BUTTON_CANCELAR);
-        } catch (AWTException e) {
-        }
-
+        } catch (AWTException e) {}
     }
 
     @Test

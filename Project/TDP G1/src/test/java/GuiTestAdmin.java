@@ -4,6 +4,7 @@ import excepciones.UsuarioYaExisteException;
 import excepciones.VehiculoRepetidoException;
 import modeloDatos.*;
 import modeloNegocio.Empresa;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -73,16 +74,6 @@ public class GuiTestAdmin {
             GuiTestUtils.cargarJTextField(nombre_usuario, "admin", robot);
             GuiTestUtils.cargarJTextField(password, "admin", robot);
             GuiTestUtils.clickComponente(login, robot);
-            robot.delay(GuiTestUtils.getDelay());
-
-
-            // Reinicio empresa
-            e.getVehiculos().clear();
-            e.getChoferes().clear();
-            e.getPedidos().clear();
-            e.getViajesIniciados().clear();
-            e.getViajesTerminados().clear();
-            e.getClientes().clear();
 
             robot.delay(GuiTestUtils.getDelay());
             dni = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.DNI_CHOFER);
@@ -112,9 +103,24 @@ public class GuiTestAdmin {
             vehiculos = (JList<Vehiculo>) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.LISTA_VEHICULOS_TOTALES);
             viajesHistoricos = (JList<Viaje>) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.LISTA_VIAJES_HISTORICOS);
             cerrarSesion = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.CERRAR_SESION_ADMIN);
-
-
         } catch (AWTException e) {}
+    }
+
+    @Test
+    public void testCerrarSesion() {
+        JPanel panelAdmin = (JPanel) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PANEL_ADMINISTRADOR);
+        Assert.assertEquals("El admin deberia estar logueado", e.getUsuarioLogeado().getNombreUsuario(), "admin");
+        GuiTestUtils.clickComponente(cerrarSesion, robot);
+        Assert.assertNull("El cliente deberia estar deslogueado", e.getUsuarioLogeado());
+
+        try {
+            JPanel paginaLogin = (JPanel) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PANEL_LOGIN);
+
+            Assert.assertTrue("El panel de login deberia estar visible", paginaLogin.isShowing());
+            Assert.assertFalse("El panel de admin no deberia estar visible", panelAdmin.isShowing());
+        } catch (NullPointerException e) {
+            Assert.fail("No se encontro el panel de login");
+        }
     }
 
     @Test
@@ -132,10 +138,11 @@ public class GuiTestAdmin {
 
             e.crearViaje(p, chofer, autito);
             Viaje viaje = e.getViajesIniciados().get(cliente);
+            e.pagarYFinalizarViaje(5);
 
             controlador.getVista().actualizar();
 
-            Assert.assertNotEquals("Lista de choferes totales deberia tener al menos un chofer", 0, choferes.getModel().getSize());
+            Assert.assertEquals("Lista de choferes totales deberia tener un chofer", 1, choferes.getModel().getSize());
             Assert.assertEquals("La lista de viajes del chofer deberia estar vacia", 0, viajesChofer.getModel().getSize());
             Assert.assertTrue("La calificacion del chofer deberia estar vacia", puntajeChofer.getText().isEmpty());
             Assert.assertTrue("El sueldo del chofer no deberia tener un valor", sueldoChofer.getText().isEmpty());
@@ -143,7 +150,7 @@ public class GuiTestAdmin {
             // selecciono el chofer que acabo de crear
             choferes.setSelectedIndex(0);
 
-            Assert.assertNotEquals("La lista de choferes deberia contener los viajes del chofer", 0, viajesChofer.getModel().getSize());
+            Assert.assertNotEquals("La lista de choferes deberia contener el viaje del chofer", 1, viajesChofer.getModel().getSize());
             Assert.assertFalse("La calificacion del chofer deberia tener el puntaje", puntajeChofer.getText().isEmpty());
 
             // Comparacion de doubles
@@ -155,6 +162,7 @@ public class GuiTestAdmin {
 
     @Test
     public void testListaChoferesSinChofer() {
+        Assert.assertEquals("La lista de viajes del chofer deberia estar vacia", 0, viajesChofer.getModel().getSize());
         Assert.assertEquals("La lista de choferes deberia estar vacia", 0, choferes.getModel().getSize());
         Assert.assertTrue("La calificacion de chofer", puntajeChofer.getText().isEmpty());
         Assert.assertTrue("El sueldo del chofer no deberia tener un valor", sueldoChofer.getText().isEmpty());
@@ -168,7 +176,7 @@ public class GuiTestAdmin {
             e.agregarCliente("pepito", "1234", "Pepe Ramon");
             controlador.getVista().actualizar();
 
-            Assert.assertEquals("La lista de clientes deberia tener un cliente", 1, clientes.getModel().getSize());
+            Assert.assertEquals("La lista de clientes deberia tener un cliente", e.getClientes().get("pepito"), clientes.getModel().getElementAt(0));
         } catch (UsuarioYaExisteException ex) {}
     }
 
@@ -180,8 +188,34 @@ public class GuiTestAdmin {
             e.agregarVehiculo(new Moto("WWW234"));
             controlador.getVista().actualizar();
 
-            Assert.assertEquals("La lista de vehiculos deberia tener un vehiculo", 1, vehiculos.getModel().getSize());
+            Assert.assertEquals("La lista de vehiculos deberia tener un vehiculo", e.getVehiculos().get("WWW234"), vehiculos.getModel().getElementAt(0));
         } catch (VehiculoRepetidoException e) {}
+    }
+
+    @Test
+    public void testListaViajesHistoricos() {
+        try {
+            Assert.assertEquals("La lista de viajes historicos deberia estar vacia", 0, viajesHistoricos.getModel().getSize());
+
+            e.agregarCliente("pepito", "1234", "Pepe Ramon");
+            cliente = e.getClientes().get("pepito");
+            Pedido p = new Pedido(cliente, 2, false, false, 1, Constantes.ZONA_STANDARD);
+            Vehiculo autito = new Auto("AAA123", 4, true);
+            Chofer chofer = new ChoferPermanente("12345678", "Pepe", 2000, 2);
+
+            e.agregarChofer(chofer);
+            e.agregarVehiculo(autito);
+            e.agregarPedido(p);
+
+            e.crearViaje(p, chofer, autito);
+            Viaje viaje = e.getViajesIniciados().get(cliente);
+            e.pagarYFinalizarViaje(5);
+
+            controlador.getVista().actualizar();
+
+            Assert.assertEquals("La lista de viajes historicos deberia tener un viaje", viaje, viajesHistoricos.getModel().getElementAt(0));
+
+        } catch (Exception e) {}
     }
 
     @Test
@@ -211,8 +245,10 @@ public class GuiTestAdmin {
         GuiTestUtils.clickComponente(permanente, robot);
         GuiTestUtils.clickComponente(nuevoChofer, robot);
 
-        Assert.assertEquals("La cantidad de choferes deberia ser 1", 1, e.getChoferes().size());
-        Assert.assertEquals("El chofer deberia estar en la lista de choferes", 1, choferes.getModel().getSize());
+        Assert.assertTrue("El vehiculo debe estar registrado", e.getChoferes().containsKey("12345678"));
+        Assert.assertEquals("El chofer deberia estar en la lista de choferes", "12345678", choferes.getModel().getElementAt(0).getDni());
+        Assert.assertEquals("Deberia haber un solo chofer", "12345678", choferesLibres.getModel().getElementAt(0).getDni());
+
         Assert.assertTrue("El campo DNI deberia estar vacio", dni.getText().isEmpty());
         Assert.assertTrue("El campo nombre deberia estar vacio", nombreChofer.getText().isEmpty());
         Assert.assertTrue("El campo cantidad de hijos deberia estar vacio", cantidadHijos.getText().isEmpty());
@@ -231,6 +267,9 @@ public class GuiTestAdmin {
             GuiTestUtils.clickComponente(nuevoChofer, robot);
 
             robot.delay(GuiTestUtils.getDelay());
+
+            Assert.assertEquals("Deberia haber un solo chofer", 1, choferesLibres.getModel().getSize());
+            Assert.assertEquals("Deberia haber un solo chofer", 1, choferes.getModel().getSize());
             Assert.assertEquals("El mensaje es incorrecto", Mensajes.CHOFER_YA_REGISTRADO.getValor(), panel.getMessage());
         } catch(ChoferRepetidoException e) {}
     }
@@ -243,8 +282,9 @@ public class GuiTestAdmin {
         GuiTestUtils.clickComponente(mascota, robot);
         GuiTestUtils.clickComponente(nuevoVehiculo, robot);
 
-        Assert.assertEquals("La cantidad de vehiculos deberia ser 1", 1, e.getVehiculos().size());
-        Assert.assertEquals("El vehiculo deberia estar en la lista de vehiculos", 1, vehiculos.getModel().getSize());
+        Assert.assertTrue("El vehiculo debe estar registrado", e.getVehiculos().containsKey("AAA123"));
+        Assert.assertEquals("El vehiculo deberia estar en la lista de vehiculos", "AAA123", vehiculos.getModel().getElementAt(0).getPatente());
+
         Assert.assertTrue("El campo patente deberia estar vacio", patenteVehiculo.getText().isEmpty());
         Assert.assertTrue("El campo cantidad de plazas deberia estar vacio", cantPlazas.getText().isEmpty());
         Assert.assertFalse("El campo mascota deberia estar deseleccionado", mascota.isSelected());
@@ -254,7 +294,6 @@ public class GuiTestAdmin {
     public void testRegistroVehiculoInvalido() {
         try {
             e.agregarVehiculo(new Auto("AAA123", 4, true));
-            controlador.getVista().actualizar();
 
             GuiTestUtils.cargarJTextField(patenteVehiculo, "AAA123", robot);
             GuiTestUtils.clickComponente(moto, robot);
@@ -272,14 +311,26 @@ public class GuiTestAdmin {
             cliente = e.getClientes().get("pepito");
             Pedido p = new Pedido(cliente, 2, false, false, 1, Constantes.ZONA_STANDARD);
             Vehiculo autito = new Auto("AAA123", 4, true);
+            Moto moto = new Moto("QWE123");
             Chofer chofer = new ChoferPermanente("12345678", "Pepe", 2000, 2);
+
+            Assert.assertEquals("La lista de pedidos pendientes deberia estar vacia", 0, pedidosPendientes.getModel().getSize());
+            Assert.assertEquals("La lista de choferes libres deberia estar vacia", 0, choferesLibres.getModel().getSize());
+            Assert.assertEquals("La lista de vehiculo deberia estar vacia", 0, vehiculosLibres.getModel().getSize());
 
             e.agregarChofer(chofer);
             e.agregarVehiculo(autito);
+            e.agregarVehiculo(moto);
             e.agregarPedido(p);
+
+            Assert.assertEquals("La lista de vehiculo deberia estar vacia hasta que se seleccione un pedido", 0, vehiculosLibres.getModel().getSize());
 
             pedidosPendientes.setSelectedIndex(0);
             choferesLibres.setSelectedIndex(0);
+
+            Assert.assertEquals("La lista de vehiculos deberia contener unicamente un vehiculo", vehiculosLibres.getModel().getSize(), 1);
+            Assert.assertEquals("El vehiculo den la lista de vehiculos disponibles deberia ser el auto", vehiculosLibres.getModel().getElementAt(0), autito);
+
             vehiculosLibres.setSelectedIndex(0);
 
             GuiTestUtils.clickComponente(nuevoViaje, robot);
@@ -291,5 +342,19 @@ public class GuiTestAdmin {
             Assert.assertFalse("El boton de nuevo viaje deberia estar deshabilitado", nuevoViaje.isEnabled());
 
         } catch(Exception e) {}
+    }
+
+    @After
+    public void tearDown() {
+        JFrame ventana = (JFrame) controlador.getVista();
+        ventana.setVisible(false);
+
+        // Reinicio empresa
+        e.getVehiculos().clear();
+        e.getChoferes().clear();
+        e.getPedidos().clear();
+        e.getViajesIniciados().clear();
+        e.getViajesTerminados().clear();
+        e.getClientes().clear();
     }
 }

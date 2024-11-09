@@ -35,6 +35,8 @@ public class GuiTestCliente {
 
     JList<Viaje> viajesCliente;
 
+    JButton cerrarSesion;
+
     FalsoOptionPane panel = new FalsoOptionPane();
 
     @BeforeClass
@@ -80,16 +82,37 @@ public class GuiTestCliente {
 
             viajesCliente = (JList<Viaje>) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.LISTA_VIAJES_CLIENTE);
 
-            // Reinicio los pedidos para que me permita hacer varios
-            e.getPedidos().clear();
+            cerrarSesion = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.CERRAR_SESION_CLIENTE);
+
         } catch (AWTException ex) {
         }
 
     }
 
     @Test
+    public void testCerrarSesion() {
+        JPanel panelCliente = (JPanel) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PANEL_CLIENTE);
+        Assert.assertEquals("El cliente deberia estar logueado", e.getUsuarioLogeado(), cliente);
+        GuiTestUtils.clickComponente(cerrarSesion, robot);
+        Assert.assertNull("El cliente deberia estar deslogueado", e.getUsuarioLogeado());
+
+        try {
+            JPanel paginaLogin = (JPanel) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.PANEL_LOGIN);
+
+            Assert.assertTrue("El panel de login deberia estar visible", paginaLogin.isShowing());
+            Assert.assertFalse("El panel de cliente no deberia estar visible", panelCliente.isShowing());
+        } catch (NullPointerException e) {
+            Assert.fail("No se encontro el panel de login");
+        }
+    }
+
+    @Test
     public void testNuevoPedidoHayVehiculo() {
         try {
+            Assert.assertNull("El cliente no deberia tener ningun pedido", e.getPedidoDeCliente(cliente));
+            Assert.assertNull("El cliente no deberia tener ningun viaje", e.getViajeDeCliente(cliente));
+            Assert.assertTrue("El cliente no deberia tener viajes o pedidos en proceso", pedidosYViajes.getText().isEmpty());
+
             // Vehiculo capaz de tomar el pedido
             e.agregarVehiculo(new Moto("BBB123"));
 
@@ -102,11 +125,14 @@ public class GuiTestCliente {
             GuiTestUtils.clickComponente(nuevoPedido, robot);
 
             // Se deberian limpiar los textField
+            robot.delay(GuiTestUtils.getDelay());
             Assert.assertTrue("El campo de cantidad de pasajeros deberia estar vacio", cantPax.getText().isEmpty());
             Assert.assertTrue("El campo de cantidad de kilometros deberia estar vacio", cantKM.getText().isEmpty());
             Assert.assertFalse("El campo baul deberia estar desmarcado", baul.isSelected());
             Assert.assertFalse("El campo mascota deberia estar desmarcado", mascota.isSelected());
 
+            // Se deberia agregar el pedido a la lista de pedidos
+            Assert.assertTrue("El cliente no deberia tener viajes o pedidos en proceso", pedidosYViajes.getText().contains("Pedido"));
         } catch (VehiculoRepetidoException ex) {}
     }
 
@@ -123,6 +149,7 @@ public class GuiTestCliente {
         // Hago pedido
         GuiTestUtils.clickComponente(nuevoPedido, robot);
 
+        Assert.assertTrue("El cliente no deberia tener viajes o pedidos en proceso", pedidosYViajes.getText().isEmpty());
         Assert.assertEquals("El mensaje es incorrecto", Mensajes.SIN_VEHICULO_PARA_PEDIDO.getValor(), panel.getMessage());
     }
 
@@ -160,6 +187,9 @@ public class GuiTestCliente {
     public void tearDown() {
         JFrame ventana = (JFrame) controlador.getVista();
         ventana.setVisible(false);
+
+        // Reinicio los pedidos para que me permita hacer varios
+        e.getPedidos().clear();
     }
 
 }

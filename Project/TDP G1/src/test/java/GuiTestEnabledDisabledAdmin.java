@@ -70,14 +70,6 @@ public class GuiTestEnabledDisabledAdmin {
             GuiTestUtils.clickComponente(login, robot);
             robot.delay(GuiTestUtils.getDelay());
 
-
-            // Reinicio empresa
-            e.getVehiculos().clear();
-            e.getChoferes().clear();
-            e.getPedidos().clear();
-            e.getViajesIniciados().clear();
-            e.getViajesTerminados().clear();
-
             robot.delay(GuiTestUtils.getDelay());
             dni = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.DNI_CHOFER);
             nombreChofer = (JTextField) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.NOMBRE_CHOFER);
@@ -334,6 +326,13 @@ public class GuiTestEnabledDisabledAdmin {
     public void tearDown() {
         JFrame ventana = (JFrame) controlador.getVista();
         ventana.setVisible(false);
+
+        // Reinicio empresa
+        e.getVehiculos().clear();
+        e.getChoferes().clear();
+        e.getPedidos().clear();
+        e.getViajesIniciados().clear();
+        e.getViajesTerminados().clear();
     }
 
 }

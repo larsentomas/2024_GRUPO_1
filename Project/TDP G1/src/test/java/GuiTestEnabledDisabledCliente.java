@@ -84,14 +84,6 @@ public class GuiTestEnabledDisabledCliente {
             nuevoPedido = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.NUEVO_PEDIDO);
             cerrarSesion = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.CERRAR_SESION_CLIENTE);
 
-            // Reseteo pedidos y viajes
-            e.getPedidos().clear();
-            e.getViajesTerminados().clear();
-            e.getViajesIniciados().clear();
-            e.getChoferes().clear();
-            e.getVehiculos().clear();
-            e.getClientes().clear();
-            controlador.getVista().actualizar();
         } catch (Exception ex) {
         }
     }
@@ -104,13 +96,13 @@ public class GuiTestEnabledDisabledCliente {
         Assert.assertTrue("Cantidad de pasajeros deberia estar vacio", cantPax.getText().isEmpty());
         Assert.assertTrue("Cantidad de km deberia estar vacio", cantKM.getText().isEmpty());
         Assert.assertTrue("Calificacion deberia estar vacio", calificacion.getText().isEmpty());
+
+        Assert.assertTrue("Cerrar sesion deberia estar visible", cerrarSesion.isVisible());
     }
 
     @Test
     public void testSinViaje() {
         robot.delay(GuiTestUtils.getDelay());
-        controlador.getVista().actualizar();
-        robot.delay(5000);
         Assert.assertEquals("Panel de pedido y viaje deberia estar vacio", pedidosYViajes.getText().length(), 0);
 
         Assert.assertFalse("Calificacion deberia estar deshabilitado", calificacion.isEnabled());
@@ -183,10 +175,10 @@ public class GuiTestEnabledDisabledCliente {
             Chofer chofer = new ChoferPermanente("12345678", "Juan Perez", 2000, 2);
             e.agregarChofer(chofer);
             e.agregarVehiculo(auto);
-            // Cargo viaje
             e.agregarPedido(pedido1);
+            // Cargo viaje
             e.crearViaje(pedido1, chofer, auto);
-            Viaje viaje = e.getViajesIniciados().get(cliente);
+            Viaje viaje = e.getViajeDeCliente(cliente);
             controlador.getVista().actualizar();
             robot.delay(GuiTestUtils.getDelay());
 
@@ -203,8 +195,8 @@ public class GuiTestEnabledDisabledCliente {
 
             Assert.assertTrue("Calificacion deberia estar habilitado", calificacion.isEnabled());
 
-            String calificacionEsperada = String.valueOf(viaje.getValor());
-            Assert.assertEquals(calificacionEsperada, valorViaje.getText());
+            String calificacionEsperada = String.valueOf(Double.valueOf(viaje.getValor()));
+            Assert.assertEquals(calificacionEsperada, String.valueOf(Double.valueOf(calificacion.getText())));
 
             // Caso 1: Todo vacio, invalido
             Assert.assertFalse("Calificar y pagar deberia estar deshabilitado", calificarPagar.isEnabled());
@@ -234,6 +226,14 @@ public class GuiTestEnabledDisabledCliente {
     public void tearDown() {
         JFrame ventana = (JFrame) controlador.getVista();
         ventana.setVisible(false);
+
+        // Reseteo pedidos y viajes
+        e.getPedidos().clear();
+        e.getViajesTerminados().clear();
+        e.getViajesIniciados().clear();
+        e.getChoferes().clear();
+        e.getVehiculos().clear();
+        e.getClientes().clear();
     }
 
 

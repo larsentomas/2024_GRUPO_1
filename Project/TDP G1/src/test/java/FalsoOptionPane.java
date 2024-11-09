@@ -16,4 +16,5 @@ public class FalsoOptionPane implements IOptionPane {
         public String getMessage() {
             return message;
         }
+
 }

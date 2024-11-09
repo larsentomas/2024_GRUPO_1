@@ -30,9 +30,6 @@ public class GuiTestEnabledDisabledLogIn {
             login = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.LOGIN);
             registrar = (JButton) GuiTestUtils.getComponentByName((Component) controlador.getVista(), Constantes.REGISTRAR);
 
-            Assert.assertTrue("El campo nombre de usuario deberia estar vacio", nombre_usuario.getText().isEmpty());
-            Assert.assertTrue("El campo password deberia estar vacio", password.getText().isEmpty());
-
         } catch (AWTException e) {}
     }
 
@@ -47,6 +44,12 @@ public class GuiTestEnabledDisabledLogIn {
     @Test
     public void testLogNada() {
         robot.delay(GuiTestUtils.getDelay());
+        GuiTestUtils.cargarJTextField(nombre_usuario, "a", robot);
+        GuiTestUtils.limpiarYCargar(nombre_usuario, "", robot);
+        GuiTestUtils.cargarJTextField(password, "a", robot);
+        GuiTestUtils.limpiarYCargar(password, "", robot);
+
+        robot.delay(GuiTestUtils.getDelay());
         Assert.assertFalse("El boton de log in deberia estar deshabilitado", login.isEnabled());
         Assert.assertTrue("El boton de registrarse deberia estar habilitado", registrar.isEnabled());
     }
@@ -55,6 +58,9 @@ public class GuiTestEnabledDisabledLogIn {
     public void testLogSoloNombre() {
         GuiTestUtils.cargarJTextField(nombre_usuario, "a", robot);
 
+        GuiTestUtils.cargarJTextField(password, "a", robot);
+        GuiTestUtils.limpiarYCargar(password, "", robot);
+
         Assert.assertFalse("El boton de log in deberia estar deshabilitado", login.isEnabled());
         Assert.assertTrue("El boton de registrarse deberia estar habilitado", registrar.isEnabled());
     }
@@ -62,6 +68,9 @@ public class GuiTestEnabledDisabledLogIn {
     @Test
     public void testLogSoloPass() {
         GuiTestUtils.cargarJTextField(password, "a", robot);
+
+        GuiTestUtils.cargarJTextField(nombre_usuario, "a", robot);
+        GuiTestUtils.limpiarYCargar(nombre_usuario, "", robot);
 
         Assert.assertFalse("El boton de log in deberia estar deshabilitado", login.isEnabled());
         Assert.assertTrue("El boton de registrarse deberia estar habilitado", registrar.isEnabled());
