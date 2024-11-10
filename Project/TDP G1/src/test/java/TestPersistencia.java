@@ -29,13 +29,11 @@ public class TestPersistencia {
     public void testAbrirSinArchivo() {
         try {
             PersistenciaBIN persistenciaBIN = new PersistenciaBIN();
-            EmpresaDTO dto;
 
             persistenciaBIN.abrirInput(FILENAME);
-            dto = (EmpresaDTO) persistenciaBIN.leer();
             persistenciaBIN.cerrarInput();
             Assert.fail("Deberia haber lanzado la excepcion de FileNotFound");
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
 
         }
     }

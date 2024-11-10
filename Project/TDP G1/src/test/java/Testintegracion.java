@@ -19,7 +19,7 @@ public class Testintegracion {
 
         emp = Empresa.getInstance();
         emp.agregarCliente("franveron", "mandarina123", "Francisco Veron");
-        this.cliente = emp.getClientes().get("pepe123");
+        this.cliente = emp.getClientes().get("franveron");
 
         Vehiculo vehiculo = new Auto("AAA000", 4, false);
         emp.agregarVehiculo(vehiculo);
@@ -38,7 +38,7 @@ public class Testintegracion {
             emp.login("franveron", "mandarina123");
             Assert.assertEquals(emp.getUsuarioLogeado(), emp.getClientes().get("franveron"));
         } catch (UsuarioNoExisteException | PasswordErroneaException e) {
-            Assert.fail("No deberia lanzar excepcion");
+            Assert.fail("No deberia lanzar la excepcion: " + e);
         }
     }
 
@@ -46,9 +46,9 @@ public class Testintegracion {
     public void testLoginAdminCorrecto() throws UsuarioNoExisteException, PasswordErroneaException {
         try {
             emp.login("admin", "admin");
-            Assert.assertEquals(emp.getUsuarioLogeado().getNombreUsuario(), "admin");
+            Assert.assertTrue("Admin Logeado",emp.isAdmin());
         } catch (UsuarioNoExisteException | PasswordErroneaException e) {
-            Assert.fail("No deberia lanzar excepcion");
+            Assert.fail("No deberia lanzar la excepcion: " + e);
         }
     }
 
@@ -59,7 +59,7 @@ public class Testintegracion {
             Assert.fail("Deberia lanzar excepcion");
         } catch (UsuarioNoExisteException e) {
         } catch (PasswordErroneaException e) {
-            Assert.fail("No deberia lanzar excepcion");
+            Assert.fail("No deberia lanzar la excepcion: " + e);
         }
     }
 
@@ -69,20 +69,19 @@ public class Testintegracion {
             emp.login("franveron", "mandarina");
             Assert.fail("Deberia lanzar excepcion");
         } catch (UsuarioNoExisteException e) {
-            Assert.fail("No deberia lanzar excepcion");
+            Assert.fail("No deberia lanzar la excepcion: " + e);
         } catch (PasswordErroneaException e) {
         }
     }
     //------------------------------------REGISTRO------------------------------------------
 
     @Test
-    public void testRegistroCorrecto() throws UsuarioYaExisteException {
+    public void testRegistroCorrecto() {
         try {
             emp.agregarCliente("tlarsen", "mandarina", "Tomas Larsen");
-            emp.login("tlarsen", "mandarina");
-            Assert.assertEquals(emp.getUsuarioLogeado().getNombreUsuario(), emp.getClientes().get("tlarsen"));
-        } catch (UsuarioYaExisteException | UsuarioNoExisteException | PasswordErroneaException e) {
-            Assert.fail("No deberia lanzar excepcion");
+            Assert.assertTrue(emp.getClientes().containsKey("tlarsen"));
+        } catch (UsuarioYaExisteException e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
         }
     }
 
@@ -91,7 +90,7 @@ public class Testintegracion {
         try {
             emp.agregarCliente("franveron", "mandarina123", "Francisco Veron");
             Assert.fail("Deberia lanzar excepcion");
-        } catch (UsuarioYaExisteException e) {
+        } catch (UsuarioYaExisteException ignored) {
 
         }
     }
@@ -101,39 +100,36 @@ public class Testintegracion {
     @Test
     public void testAgregarPedidoCorrecto() {
         try {
+            emp.login("franveron", "mandarina123");
             Pedido pedido = new Pedido(cliente, 3, false, false, 6, Constantes.ZONA_STANDARD);
             emp.agregarPedido(pedido);
             Assert.assertTrue(emp.getPedidos().containsValue(pedido));
-        } catch (ClienteNoExisteException e) {
-            Assert.fail("No deberia lanzar excepcion");
-        } catch (ClienteConViajePendienteException e) {
-            Assert.fail("No deberia lanzar excepcion");
-        } catch (SinVehiculoParaPedidoException e) {
-            Assert.fail("No deberia lanzar excepcion");
-        } catch (ClienteConPedidoPendienteException e) {
-            Assert.fail("No deberia lanzar excepcion");
+        } catch (ClienteNoExisteException | ClienteConPedidoPendienteException | SinVehiculoParaPedidoException |
+                 ClienteConViajePendienteException | PasswordErroneaException | UsuarioNoExisteException e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
         }
     }
 
     @Test
     public void testAgregarPedidoClienteNoExiste() {
         try {
+            emp.login("franveron", "mandarina123");
             Pedido pedido = new Pedido(new Cliente("tlarsen", "mandarina", "Tomas Larsen"), 3, false, false, 6, Constantes.ZONA_STANDARD);
             emp.agregarPedido(pedido);
             Assert.fail("Deberia lanzar excepcion");
-        } catch (ClienteNoExisteException e) {
-        } catch (ClienteConViajePendienteException e) {
-            Assert.fail("No deberia lanzar excepcion");
-        } catch (SinVehiculoParaPedidoException e) {
-            Assert.fail("No deberia lanzar excepcion");
-        } catch (ClienteConPedidoPendienteException e) {
-            Assert.fail("No deberia lanzar excepcion");
+        } catch (ClienteConViajePendienteException | ClienteConPedidoPendienteException |
+                 SinVehiculoParaPedidoException | PasswordErroneaException | UsuarioNoExisteException e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
+        } catch (ClienteNoExisteException ignored) {
         }
+
     }
 
+    //Consultar
     @Test
     public void testAgregarPedidoClienteConViajePendiente() {
         try {
+            emp.login("franveron", "mandarina123");
             Pedido pedido = new Pedido(cliente, 3, false, false, 6, Constantes.ZONA_STANDARD);
             emp.agregarPedido(pedido);
             emp.crearViaje(pedido,chofer,vehiculo);
@@ -141,49 +137,127 @@ public class Testintegracion {
             Assert.fail("Deberia lanzar excepcion");
         } catch (ClienteNoExisteException | VehiculoNoValidoException | VehiculoNoDisponibleException |
                  PedidoInexistenteException | ChoferNoDisponibleException | ClienteConPedidoPendienteException |
-                 SinVehiculoParaPedidoException e) {
-            Assert.fail("No deberia lanzar excepcion");
-        } catch (ClienteConViajePendienteException e){
+                 SinVehiculoParaPedidoException | PasswordErroneaException | UsuarioNoExisteException  e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
+        } catch (ClienteConViajePendienteException ignored){
         }
     }
 
     @Test
     public void testAgregarPedidoSinVehiculoParaPedido() {
         try {
+            emp.login("franveron", "mandarina123");
             Pedido pedido = new Pedido(cliente, 3, true, false, 6, Constantes.ZONA_STANDARD);
             //El pedido tiene mascota no deberia conseguir auto
             emp.agregarPedido(pedido);
             Assert.fail("Deberia lanzar excepcion");
-        } catch (ClienteNoExisteException e) {
-            Assert.fail("No deberia lanzar excepcion");
-        } catch (ClienteConViajePendienteException e) {
-            Assert.fail("No deberia lanzar excepcion");
+        } catch (ClienteNoExisteException | ClienteConPedidoPendienteException | ClienteConViajePendienteException |
+                 PasswordErroneaException | UsuarioNoExisteException e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
         } catch (SinVehiculoParaPedidoException e) {
-        } catch (ClienteConPedidoPendienteException e) {
-            Assert.fail("No deberia lanzar excepcion");
         }
     }
 
     @Test
     public void testAgregarPedidoClienteConPedidoPendiente() {
         try {
+            emp.login("franveron", "mandarina123");
             Pedido pedido = new Pedido(cliente, 3, false, false, 6, Constantes.ZONA_STANDARD);
             emp.agregarPedido(pedido);
             emp.agregarPedido(pedido);
             Assert.fail("Deberia lanzar excepcion");
-        } catch (ClienteNoExisteException e) {
-            Assert.fail("No deberia lanzar excepcion");
-        } catch (ClienteConViajePendienteException e) {
-            Assert.fail("No deberia lanzar excepcion");
-        } catch (SinVehiculoParaPedidoException e) {
-            Assert.fail("No deberia lanzar excepcion");
-        } catch (ClienteConPedidoPendienteException e) {
+        } catch (ClienteNoExisteException | SinVehiculoParaPedidoException | ClienteConViajePendienteException |
+                 PasswordErroneaException | UsuarioNoExisteException e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
+        } catch (ClienteConPedidoPendienteException ignored) {
         }
     }
 
     @Test
+    public void testCrearViajeClienteCorrecto(){
+        try {
+            emp.login("franveron", "mandarina123");
+            Pedido pedido = new Pedido(cliente, 3, false, false, 6, Constantes.ZONA_STANDARD);
+            emp.agregarPedido(pedido);
+            emp.crearViaje(pedido,chofer,vehiculo);
+            Assert.assertTrue(emp.getViajesIniciados().containsKey(cliente));
+        } catch (ClienteNoExisteException | VehiculoNoValidoException | VehiculoNoDisponibleException |
+                 PedidoInexistenteException | ChoferNoDisponibleException | ClienteConPedidoPendienteException |
+                 SinVehiculoParaPedidoException | ClienteConViajePendienteException |
+                 PasswordErroneaException | UsuarioNoExisteException e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
+        }
+    }
+
+    @Test
+    public void testCrearViajeClienteSinPedidoPendiente(){
+        try {
+            emp.login("franveron", "mandarina123");
+            emp.crearViaje(new Pedido(cliente, 3, false, false, 6, Constantes.ZONA_STANDARD),chofer,vehiculo);
+            Assert.fail("Deberia lanzar excepcion");
+        } catch (VehiculoNoValidoException | VehiculoNoDisponibleException | ChoferNoDisponibleException |
+                 ClienteConViajePendienteException | UsuarioNoExisteException | PasswordErroneaException e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
+        } catch (PedidoInexistenteException ignored){
+        }
+    }
+
+    @Test
+    public void testCrearViajeClienteChoferNoDisponible(){
+        try {
+            emp.login("franveron", "mandarina123");
+            Pedido pedido = new Pedido(cliente, 3, false, false, 6, Constantes.ZONA_STANDARD);
+            emp.agregarPedido(pedido);
+            ChoferPermanente chofer2 = new ChoferPermanente("16186552", "Jorge", 2012, 1);
+            emp.crearViaje(pedido,chofer2,vehiculo);
+            Assert.fail("Deberia lanzar excepcion");
+        } catch (ClienteNoExisteException | VehiculoNoValidoException | VehiculoNoDisponibleException |
+                 PedidoInexistenteException | ClienteConPedidoPendienteException | ClienteConViajePendienteException |
+                 SinVehiculoParaPedidoException | UsuarioNoExisteException | PasswordErroneaException e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
+        } catch (ChoferNoDisponibleException ignored){
+        }
+    }
+
+    @Test
+    public void testCrearViajeClienteVehiculoNoDisponible(){
+        try {
+            emp.login("franveron", "mandarina123");
+            Pedido pedido = new Pedido(cliente, 3, false, false, 6, Constantes.ZONA_STANDARD);
+            emp.agregarPedido(pedido);
+            Vehiculo vehiculo2 = new Auto("AAA111", 4, true);
+            emp.crearViaje(pedido,chofer,vehiculo2);
+            Assert.fail("Deberia lanzar excepcion");
+        } catch (ClienteNoExisteException | VehiculoNoValidoException | PedidoInexistenteException |
+                 ChoferNoDisponibleException | ClienteConPedidoPendienteException | ClienteConViajePendienteException |
+                 SinVehiculoParaPedidoException | UsuarioNoExisteException | PasswordErroneaException e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
+        } catch (VehiculoNoDisponibleException ignored){
+        }
+    }
+
+    @Test
+    public void testCrearViajeClienteViajeExistente(){
+        try {
+            emp.login("franveron", "mandarina123");
+            Pedido pedido = new Pedido(cliente, 3, false, false, 6, Constantes.ZONA_STANDARD);
+            emp.agregarPedido(pedido);
+            emp.crearViaje(pedido,chofer,vehiculo);
+            emp.crearViaje(pedido,chofer,vehiculo);
+            Assert.fail("Deberia lanzar excepcion");
+        } catch (ClienteNoExisteException | VehiculoNoValidoException | VehiculoNoDisponibleException |
+                 PedidoInexistenteException | ChoferNoDisponibleException | ClienteConPedidoPendienteException |
+                 SinVehiculoParaPedidoException | UsuarioNoExisteException | PasswordErroneaException e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
+        } catch (ClienteConViajePendienteException ignored){
+        }
+    }
+
+
+    @Test
     public void testPagarYFinalizarCorrecto(){
         try {
+            emp.login("franveron", "mandarina123");
             Pedido pedido = new Pedido(cliente, 3, false, false, 6, Constantes.ZONA_STANDARD);
             emp.agregarPedido(pedido);
             emp.crearViaje(pedido,chofer,vehiculo);
@@ -191,10 +265,9 @@ public class Testintegracion {
             Assert.assertFalse(emp.getViajesIniciados().containsKey(cliente));
         } catch (ClienteNoExisteException | VehiculoNoValidoException | VehiculoNoDisponibleException |
                  PedidoInexistenteException | ChoferNoDisponibleException | ClienteConPedidoPendienteException |
-                 SinVehiculoParaPedidoException e) {
-            Assert.fail("No deberia lanzar excepcion");
-        } catch (ClienteConViajePendienteException | ClienteSinViajePendienteException e) {
-            Assert.fail("No deberia lanzar excepcion");
+                 SinVehiculoParaPedidoException | ClienteConViajePendienteException |
+                 ClienteSinViajePendienteException | PasswordErroneaException | UsuarioNoExisteException e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
         }
     }
 
@@ -203,126 +276,149 @@ public class Testintegracion {
         try {
             emp.pagarYFinalizarViaje(5);
             Assert.fail("Deberia lanzar excepcion");
-        } catch (ClienteSinViajePendienteException e) {
+        } catch (ClienteSinViajePendienteException ignored) {
         }
     }
 
     //------------------------------------ADMINISTRADOR------------------------------------------
 
     @Test
-    public void testAgregarVehiculoCorrecto() throws VehiculoRepetidoException {
+    public void testAgregarVehiculoCorrecto(){
         try {
+            emp.login("admin", "admin");
             Vehiculo vehiculo = new Auto("AAA111", 4, true);
             emp.agregarVehiculo(vehiculo);
             Assert.assertTrue(emp.getVehiculos().containsValue(vehiculo));
-        } catch (VehiculoRepetidoException e) {
-            Assert.fail("No deberia lanzar excepcion");
+        } catch (VehiculoRepetidoException | PasswordErroneaException | UsuarioNoExisteException e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
         }
     }
 
     @Test
-    public void testAgregarVehiculoRepetido() {
+    public void testAgregarVehiculoRepetido(){
         try {
+            emp.login("admin", "admin");
             emp.agregarVehiculo(vehiculo);
             Assert.fail("Deberia lanzar excepcion");
-        } catch (VehiculoRepetidoException e) {
+        } catch (PasswordErroneaException | UsuarioNoExisteException e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
+        } catch (VehiculoRepetidoException ignored) {
         }
     }
 
     @Test
-    public void testAgregarChoferCorrecto() throws ChoferRepetidoException {
+    public void testAgregarChoferCorrecto(){
         try {
+            emp.login("admin", "admin");
             ChoferPermanente chofer = new ChoferPermanente("16186552", "Jorge", 2012, 1);
             emp.agregarChofer(chofer);
             Assert.assertTrue(emp.getChoferes().containsValue(chofer));
-        } catch (ChoferRepetidoException e) {
-            Assert.fail("No deberia lanzar excepcion");
+        } catch (ChoferRepetidoException | UsuarioNoExisteException | PasswordErroneaException e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
         }
     }
 
     @Test
     public void testAgregarChoferRepetido() {
         try {
+            emp.login("admin", "admin");
             emp.agregarChofer(chofer);
             Assert.fail("Deberia lanzar excepcion");
-        } catch (ChoferRepetidoException e) {
+        } catch (UsuarioNoExisteException | PasswordErroneaException e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
+        } catch (ChoferRepetidoException ignored) {
         }
     }
 
     @Test
     public void testCrearViajeCorrecto(){
         try {
+            emp.login("admin", "admin");
             Pedido pedido = new Pedido(cliente, 3, false, false, 6, Constantes.ZONA_STANDARD);
             emp.agregarPedido(pedido);
             emp.crearViaje(pedido,chofer,vehiculo);
             Assert.assertTrue(emp.getViajesIniciados().containsKey(cliente));
         } catch (ClienteNoExisteException | VehiculoNoValidoException | VehiculoNoDisponibleException |
                  PedidoInexistenteException | ChoferNoDisponibleException | ClienteConPedidoPendienteException |
-                 SinVehiculoParaPedidoException e) {
-            Assert.fail("No deberia lanzar excepcion");
-        } catch (ClienteConViajePendienteException e){
-            Assert.fail("No deberia lanzar excepcion");
+                 SinVehiculoParaPedidoException | ClienteConViajePendienteException | UsuarioNoExisteException |
+                 PasswordErroneaException e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
         }
     }
 
     @Test
     public void testCrearViajeClienteConViajePendiente(){
         try {
+            emp.login("admin", "admin");
+
             Pedido pedido = new Pedido(cliente, 3, false, false, 6, Constantes.ZONA_STANDARD);
             emp.agregarPedido(pedido);
             emp.crearViaje(pedido,chofer,vehiculo);
-            emp.crearViaje(pedido,chofer,vehiculo);
+
+            Pedido pedido2 = new Pedido(cliente, 3, false, false, 6, Constantes.ZONA_STANDARD);
+            emp.agregarPedido(pedido2);
+            ChoferPermanente chofer2 = new ChoferPermanente("16186552", "Jorge", 2012, 1);
+            emp.agregarChofer(chofer2);
+            Vehiculo vehiculo2 = new Auto("AAA111", 4, true);
+            emp.agregarVehiculo(vehiculo2);
+            emp.crearViaje(pedido2,chofer2,vehiculo2);
+
             Assert.fail("Deberia lanzar excepcion");
         } catch (ClienteNoExisteException | VehiculoNoValidoException | VehiculoNoDisponibleException |
                  PedidoInexistenteException | ChoferNoDisponibleException | ClienteConPedidoPendienteException |
-                 SinVehiculoParaPedidoException e) {
-            Assert.fail("No deberia lanzar excepcion");
-        } catch (ClienteConViajePendienteException e){
+                 SinVehiculoParaPedidoException | UsuarioNoExisteException | PasswordErroneaException |
+                 VehiculoRepetidoException | ChoferRepetidoException e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
+        } catch (ClienteConViajePendienteException ignored){
         }
     }
 
     @Test
     public void testCrearViajePedidoInexistente(){
         try {
+            emp.login("admin", "admin");
             Pedido pedido = new Pedido(cliente, 3, false, false, 6, Constantes.ZONA_STANDARD);
             emp.crearViaje(pedido,chofer,vehiculo);
             Assert.fail("Deberia lanzar excepcion");
         } catch (VehiculoNoValidoException | VehiculoNoDisponibleException | ChoferNoDisponibleException |
-                 ClienteConViajePendienteException e) {
-            Assert.fail("No deberia lanzar excepcion");
-        } catch (PedidoInexistenteException e){
+                 ClienteConViajePendienteException | UsuarioNoExisteException | PasswordErroneaException e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
+        } catch (PedidoInexistenteException ignored){
         }
     }
 
     @Test
     public void testCrearViajeVehiculoNoValido(){
         try {
+            emp.login("admin", "admin");
             Pedido pedido = new Pedido(cliente, 3, false, false, 6, Constantes.ZONA_STANDARD);
             emp.agregarPedido(pedido);
-            Vehiculo vehiculo = new Auto("AAA111", 4, true);
-            emp.crearViaje(pedido,chofer,vehiculo);
+            Vehiculo vehiculo2 = new Auto("AAA111", 1, true);
+            emp.agregarVehiculo(vehiculo2);
+            emp.crearViaje(pedido,chofer,vehiculo2);
             Assert.fail("Deberia lanzar excepcion");
         } catch (ClienteNoExisteException | VehiculoNoDisponibleException | PedidoInexistenteException |
                  ChoferNoDisponibleException | ClienteConPedidoPendienteException | SinVehiculoParaPedidoException |
-                 ClienteConViajePendienteException e) {
-            Assert.fail("No deberia lanzar excepcion");
-        } catch (VehiculoNoValidoException e){
+                 ClienteConViajePendienteException | UsuarioNoExisteException | PasswordErroneaException |
+                 VehiculoRepetidoException e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
+        } catch (VehiculoNoValidoException ignored){
         }
     }
 
     @Test
     public void testCrearViajeVehiculoNoDisponible(){
         try {
+            emp.login("admin", "admin");
             Pedido pedido = new Pedido(cliente, 3, false, false, 6, Constantes.ZONA_STANDARD);
             emp.agregarPedido(pedido);
-            Vehiculo vehiculo = new Auto("AAA111", 4, true);
-            emp.agregarVehiculo(vehiculo);
-            emp.crearViaje(pedido,chofer,vehiculo);
+            Vehiculo vehiculo2 = new Auto("AAA111", 4, true);
+            emp.crearViaje(pedido,chofer,vehiculo2);
             Assert.fail("Deberia lanzar excepcion");
         } catch (ClienteNoExisteException | VehiculoNoValidoException | PedidoInexistenteException |
                  ChoferNoDisponibleException | ClienteConPedidoPendienteException | ClienteConViajePendienteException |
-                 SinVehiculoParaPedidoException | VehiculoRepetidoException e) {
-            Assert.fail("No deberia lanzar excepcion");
+                 SinVehiculoParaPedidoException | UsuarioNoExisteException | PasswordErroneaException e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
         } catch (VehiculoNoDisponibleException e){
         }
     }
@@ -330,16 +426,16 @@ public class Testintegracion {
     @Test
     public void testCrearViajeChoferNoDisponible(){
         try {
+            emp.login("admin", "admin");
             Pedido pedido = new Pedido(cliente, 3, false, false, 6, Constantes.ZONA_STANDARD);
             emp.agregarPedido(pedido);
-            ChoferPermanente chofer = new ChoferPermanente("16186552", "Jorge", 2012, 1);
-            emp.agregarChofer(chofer);
-            emp.crearViaje(pedido,chofer,vehiculo);
+            ChoferPermanente chofer2 = new ChoferPermanente("16186552", "Jorge", 2012, 1);
+            emp.crearViaje(pedido,chofer2,vehiculo);
             Assert.fail("Deberia lanzar excepcion");
         } catch (ClienteNoExisteException | VehiculoNoValidoException | VehiculoNoDisponibleException |
                  PedidoInexistenteException | ClienteConPedidoPendienteException | ClienteConViajePendienteException |
-                 SinVehiculoParaPedidoException | ChoferRepetidoException e) {
-            Assert.fail("No deberia lanzar excepcion");
+                 SinVehiculoParaPedidoException | UsuarioNoExisteException | PasswordErroneaException e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
         } catch (ChoferNoDisponibleException e){
         }
     }
