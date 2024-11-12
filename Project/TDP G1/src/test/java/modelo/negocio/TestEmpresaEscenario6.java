@@ -40,7 +40,7 @@ public class TestEmpresaEscenario6 {
             emp.agregarChofer(chofer1);
 
             // Vehiculos
-            auto2 = new Auto("BBB111", 4, false);)
+            auto2 = new Auto("BBB111", 4, false);
             moto1 = new Moto("BBB222");
             emp.agregarVehiculo(auto2);
             emp.agregarVehiculo(moto1);

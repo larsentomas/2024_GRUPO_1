@@ -22,14 +22,15 @@ public class TestPersistencia {
      * Intento despersistir sin un archivo, deberia lanzar una excepcion
      */
     @Test
-    public void testAbrirSinArchivo() {
+    public void testDepersistirSinArchivo() {
         try {
             PersistenciaBIN persistenciaBIN = new PersistenciaBIN();
 
             persistenciaBIN.abrirInput(FILENAME);
+            EmpresaDTO dto = (EmpresaDTO) persistenciaBIN.leer();
             persistenciaBIN.cerrarInput();
-            Assert.fail("Deberia haber lanzado la excepcion de FileNotFound");
-        } catch (IOException e) {
+            Assert.fail("Deberia lanzar excepcion");
+        } catch (IOException | ClassNotFoundException ignored) {
 
         }
     }
@@ -56,21 +57,235 @@ public class TestPersistencia {
         }
     }
 
+    /**
+     * Prueba la lectura y escritura de los clientes dentro de la empresa sea cual sea su contenido, al guardar los
+     * datos de empresa original y compararla con los leidos deberian ser iguales
+     */
     @Test
-    public void testLeerEscribir(){
+    public void testLeerEscribirClientes(){
         try{
             PersistenciaBIN persistenciaBIN = new PersistenciaBIN();
             persistenciaBIN.abrirOutput(FILENAME);
             persistenciaBIN.abrirInput(FILENAME);
 
-            EmpresaDTO nuevo = UtilPersistencia.EmpresaDtoFromEmpresa();
-            persistenciaBIN.escribir(nuevo);
+            EmpresaDTO original = UtilPersistencia.EmpresaDtoFromEmpresa();
+            persistenciaBIN.escribir(original);
             persistenciaBIN.cerrarOutput();
 
             EmpresaDTO dto = (EmpresaDTO) persistenciaBIN.leer();
             persistenciaBIN.cerrarInput();
 
-            Assert.assertEquals("Las empresas deberian ser iguales, fallo en la persistencia",nuevo,dto);
+            Assert.assertEquals("Los clientes deberian ser iguales",original.getClientes(),dto.getClientes());
+
+        } catch (IOException | ClassNotFoundException e) {
+            Assert.fail("No se deberia lanzar la excepcion");
+        }
+    }
+
+    /**
+     * Prueba la lectura y escritura de los choferes dentro de la empresa sea cual sea su contenido, al guardar los
+     * datos de empresa original y compararla con los leidos deberian ser iguales
+     */
+    @Test
+    public void testLeerEscribirChoferes(){
+        try{
+            PersistenciaBIN persistenciaBIN = new PersistenciaBIN();
+            persistenciaBIN.abrirOutput(FILENAME);
+            persistenciaBIN.abrirInput(FILENAME);
+
+            EmpresaDTO original = UtilPersistencia.EmpresaDtoFromEmpresa();
+            persistenciaBIN.escribir(original);
+            persistenciaBIN.cerrarOutput();
+
+            EmpresaDTO dto = (EmpresaDTO) persistenciaBIN.leer();
+            persistenciaBIN.cerrarInput();
+
+            Assert.assertEquals("Los choferes deberian ser iguales",original.getChoferes(),dto.getChoferes());
+
+        } catch (IOException | ClassNotFoundException e) {
+            Assert.fail("No se deberia lanzar la excepcion");
+        }
+    }
+
+
+    /**
+     * Prueba la lectura y escritura de los vehiculos dentro de la empresa sea cual sea su contenido, al guardar los
+     * datos de empresa original y compararla con los leidos deberian ser iguales
+     */
+
+    @Test
+    public void testLeerEscribirVehiculos(){
+        try{
+            PersistenciaBIN persistenciaBIN = new PersistenciaBIN();
+            persistenciaBIN.abrirOutput(FILENAME);
+            persistenciaBIN.abrirInput(FILENAME);
+
+            EmpresaDTO original = UtilPersistencia.EmpresaDtoFromEmpresa();
+            persistenciaBIN.escribir(original);
+            persistenciaBIN.cerrarOutput();
+
+            EmpresaDTO dto = (EmpresaDTO) persistenciaBIN.leer();
+            persistenciaBIN.cerrarInput();
+
+            Assert.assertEquals("Los vehiculos deberian ser iguales",original.getVehiculos(),dto.getVehiculos());
+
+        } catch (IOException | ClassNotFoundException e) {
+            Assert.fail("No se deberia lanzar la excepcion");
+        }
+    }
+
+    /**
+     * Prueba la lectura y escritura de los choferes desocupados dentro de la empresa sea cual sea su contenido, al guardar los
+     * datos de empresa original y compararla con los leidos deberian ser iguales
+     */
+
+    @Test
+    public void testLeerEscribirChoferesDesocupados(){
+        try{
+            PersistenciaBIN persistenciaBIN = new PersistenciaBIN();
+            persistenciaBIN.abrirOutput(FILENAME);
+            persistenciaBIN.abrirInput(FILENAME);
+
+            EmpresaDTO original = UtilPersistencia.EmpresaDtoFromEmpresa();
+            persistenciaBIN.escribir(original);
+            persistenciaBIN.cerrarOutput();
+
+            EmpresaDTO dto = (EmpresaDTO) persistenciaBIN.leer();
+            persistenciaBIN.cerrarInput();
+
+            Assert.assertEquals("Los choferes desocupados deberian ser iguales",original.getChoferesDesocupados(),dto.getChoferesDesocupados());
+
+        } catch (IOException | ClassNotFoundException e) {
+            Assert.fail("No se deberia lanzar la excepcion");
+        }
+    }
+
+    /**
+     * Prueba la lectura y escritura de los vehiculos desocupados dentro de la empresa sea cual sea su contenido, al guardar los
+     * datos de empresa original y compararla con los leidos deberian ser iguales
+     */
+
+    @Test
+    public void testLeerEscribirVehiculosDesocupados(){
+        try{
+            PersistenciaBIN persistenciaBIN = new PersistenciaBIN();
+            persistenciaBIN.abrirOutput(FILENAME);
+            persistenciaBIN.abrirInput(FILENAME);
+
+            EmpresaDTO original = UtilPersistencia.EmpresaDtoFromEmpresa();
+            persistenciaBIN.escribir(original);
+            persistenciaBIN.cerrarOutput();
+
+            EmpresaDTO dto = (EmpresaDTO) persistenciaBIN.leer();
+            persistenciaBIN.cerrarInput();
+
+            Assert.assertEquals("Los vehiculos desocupados deberian ser iguales",original.getVehiculosDesocupados(),dto.getVehiculosDesocupados());
+
+        } catch (IOException | ClassNotFoundException e) {
+            Assert.fail("No se deberia lanzar la excepcion");
+        }
+    }
+
+    /**
+     * Prueba la lectura y escritura de los pedidos dentro de la empresa sea cual sea su contenido, al guardar los
+     * datos de empresa original y compararla con los leidos deberian ser iguales
+     */
+
+    @Test
+
+    public void testLeerEscribirPedidos(){
+        try{
+            PersistenciaBIN persistenciaBIN = new PersistenciaBIN();
+            persistenciaBIN.abrirOutput(FILENAME);
+            persistenciaBIN.abrirInput(FILENAME);
+
+            EmpresaDTO original = UtilPersistencia.EmpresaDtoFromEmpresa();
+            persistenciaBIN.escribir(original);
+            persistenciaBIN.cerrarOutput();
+
+            EmpresaDTO dto = (EmpresaDTO) persistenciaBIN.leer();
+            persistenciaBIN.cerrarInput();
+
+            Assert.assertEquals("Los pedidos deberian ser iguales",original.getPedidos(),dto.getPedidos());
+
+        } catch (IOException | ClassNotFoundException e) {
+            Assert.fail("No se deberia lanzar la excepcion");
+        }
+    }
+
+    /**
+     * Prueba la lectura y escritura de los viajes iniciados dentro de la empresa sea cual sea su contenido, al guardar los
+     * datos de empresa original y compararla con los leidos deberian ser iguales
+     */
+
+    @Test
+
+    public void testLeerEscribirViajesIniciados(){
+        try{
+            PersistenciaBIN persistenciaBIN = new PersistenciaBIN();
+            persistenciaBIN.abrirOutput(FILENAME);
+            persistenciaBIN.abrirInput(FILENAME);
+
+            EmpresaDTO original = UtilPersistencia.EmpresaDtoFromEmpresa();
+            persistenciaBIN.escribir(original);
+            persistenciaBIN.cerrarOutput();
+
+            EmpresaDTO dto = (EmpresaDTO) persistenciaBIN.leer();
+            persistenciaBIN.cerrarInput();
+
+            Assert.assertEquals("Los viajes iniciados deberian ser iguales",original.getViajesIniciados(),dto.getViajesIniciados());
+
+        } catch (IOException | ClassNotFoundException e) {
+            Assert.fail("No se deberia lanzar la excepcion");
+        }
+    }
+
+    /**
+     * Prueba la lectura y escritura de los viajes terminados dentro de la empresa sea cual sea su contenido, al guardar los
+     * datos de empresa original y compararla con los leidos deberian ser iguales
+     */
+
+    @Test
+
+    public void testLeerEscribirViajesTerminados(){
+        try{
+            PersistenciaBIN persistenciaBIN = new PersistenciaBIN();
+            persistenciaBIN.abrirOutput(FILENAME);
+            persistenciaBIN.abrirInput(FILENAME);
+
+            EmpresaDTO original = UtilPersistencia.EmpresaDtoFromEmpresa();
+            persistenciaBIN.escribir(original);
+            persistenciaBIN.cerrarOutput();
+
+            EmpresaDTO dto = (EmpresaDTO) persistenciaBIN.leer();
+            persistenciaBIN.cerrarInput();
+
+            Assert.assertEquals("Los viajes finalizados deberian ser iguales",original.getViajesTerminados(),dto.getViajesTerminados());
+
+        } catch (IOException | ClassNotFoundException e) {
+            Assert.fail("No se deberia lanzar la excepcion");
+        }
+    }
+
+    /**
+     * Prueba la lectura y escritura del usuario logeado dentro de la empresa sea cual sea su contenido, al guardar los
+     * datos de empresa original y compararla con los leidos deberian ser iguales
+     */
+    @Test
+    public void testLeerEscribirUsuarioLogeado(){
+        try{
+            PersistenciaBIN persistenciaBIN = new PersistenciaBIN();
+            persistenciaBIN.abrirOutput(FILENAME);
+            persistenciaBIN.abrirInput(FILENAME);
+
+            EmpresaDTO original = UtilPersistencia.EmpresaDtoFromEmpresa();
+            persistenciaBIN.escribir(original);
+            persistenciaBIN.cerrarOutput();
+
+            EmpresaDTO dto = (EmpresaDTO) persistenciaBIN.leer();
+            persistenciaBIN.cerrarInput();
+
+            Assert.assertEquals("El usuario logeado deberia ser igual",original.getUsuarioLogeado(),dto.getUsuarioLogeado());
 
         } catch (IOException | ClassNotFoundException e) {
             Assert.fail("No se deberia lanzar la excepcion");

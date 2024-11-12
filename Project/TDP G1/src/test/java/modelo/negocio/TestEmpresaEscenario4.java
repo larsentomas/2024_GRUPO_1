@@ -59,7 +59,7 @@ public class TestEmpresaEscenario4 {
             emp.agregarPedido(pedido1);
 
             // Viaje de chofer2 y cliente1
-            emp.getViajesTerminados().add(new Viaje(new Pedido(cliente1, 2, false, false, 4, Constantes.ZONA_SIN_ASFALTAR), chofer2, auto1);)
+            emp.getViajesTerminados().add(new Viaje(new Pedido(cliente1, 2, false, false, 4, Constantes.ZONA_SIN_ASFALTAR), chofer2, auto1));
         } catch (Exception e) {
             Assert.fail("No deberia haber lanzado la excepcion " + e);
         }

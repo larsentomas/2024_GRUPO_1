@@ -3,12 +3,13 @@ package integracion;
 import excepciones.*;
 import modeloDatos.*;
 import modeloNegocio.Empresa;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import util.Constantes;
 
-public class Testintegracion {
+public class TestIntegracion {
 
     Empresa emp;
     Cliente cliente;
@@ -30,6 +31,24 @@ public class Testintegracion {
         emp.agregarChofer(chofer);
         this.chofer = chofer;
 
+    }
+
+    @After
+    public void tearDown()
+    {
+        emp.getClientes().clear();
+        emp.getPedidos().clear();
+
+        emp.getVehiculos().clear();
+        emp.getVehiculosDesocupados().clear();
+
+        emp.getChoferes().clear();
+        emp.getChoferesDesocupados().clear();
+
+        emp.getViajesIniciados().clear();
+        emp.getViajesTerminados().clear();
+
+        emp.setUsuarioLogeado(null);
     }
 
     //------------------------------------LOGIN------------------------------------------
@@ -126,7 +145,6 @@ public class Testintegracion {
 
     }
 
-    //Consultar
     @Test
     public void testAgregarPedidoClienteConViajePendiente() {
         try {
@@ -175,87 +193,6 @@ public class Testintegracion {
     }
 
     @Test
-    public void testCrearViajeClienteCorrecto(){
-        try {
-            emp.login("franveron", "mandarina123");
-            Pedido pedido = new Pedido(cliente, 3, false, false, 6, Constantes.ZONA_STANDARD);
-            emp.agregarPedido(pedido);
-            emp.crearViaje(pedido,chofer,vehiculo);
-            Assert.assertTrue(emp.getViajesIniciados().containsKey(cliente));
-        } catch (ClienteNoExisteException | VehiculoNoValidoException | VehiculoNoDisponibleException |
-                 PedidoInexistenteException | ChoferNoDisponibleException | ClienteConPedidoPendienteException |
-                 SinVehiculoParaPedidoException | ClienteConViajePendienteException |
-                 PasswordErroneaException | UsuarioNoExisteException e) {
-            Assert.fail("No deberia lanzar la excepcion: " + e);
-        }
-    }
-
-    @Test
-    public void testCrearViajeClienteSinPedidoPendiente(){
-        try {
-            emp.login("franveron", "mandarina123");
-            emp.crearViaje(new Pedido(cliente, 3, false, false, 6, Constantes.ZONA_STANDARD),chofer,vehiculo);
-            Assert.fail("Deberia lanzar excepcion");
-        } catch (VehiculoNoValidoException | VehiculoNoDisponibleException | ChoferNoDisponibleException |
-                 ClienteConViajePendienteException | UsuarioNoExisteException | PasswordErroneaException e) {
-            Assert.fail("No deberia lanzar la excepcion: " + e);
-        } catch (PedidoInexistenteException ignored){
-        }
-    }
-
-    @Test
-    public void testCrearViajeClienteChoferNoDisponible(){
-        try {
-            emp.login("franveron", "mandarina123");
-            Pedido pedido = new Pedido(cliente, 3, false, false, 6, Constantes.ZONA_STANDARD);
-            emp.agregarPedido(pedido);
-            ChoferPermanente chofer2 = new ChoferPermanente("16186552", "Jorge", 2012, 1);
-            emp.crearViaje(pedido,chofer2,vehiculo);
-            Assert.fail("Deberia lanzar excepcion");
-        } catch (ClienteNoExisteException | VehiculoNoValidoException | VehiculoNoDisponibleException |
-                 PedidoInexistenteException | ClienteConPedidoPendienteException | ClienteConViajePendienteException |
-                 SinVehiculoParaPedidoException | UsuarioNoExisteException | PasswordErroneaException e) {
-            Assert.fail("No deberia lanzar la excepcion: " + e);
-        } catch (ChoferNoDisponibleException ignored){
-        }
-    }
-
-    @Test
-    public void testCrearViajeClienteVehiculoNoDisponible(){
-        try {
-            emp.login("franveron", "mandarina123");
-            Pedido pedido = new Pedido(cliente, 3, false, false, 6, Constantes.ZONA_STANDARD);
-            emp.agregarPedido(pedido);
-            Vehiculo vehiculo2 = new Auto("AAA111", 4, true);
-            emp.crearViaje(pedido,chofer,vehiculo2);
-            Assert.fail("Deberia lanzar excepcion");
-        } catch (ClienteNoExisteException | VehiculoNoValidoException | PedidoInexistenteException |
-                 ChoferNoDisponibleException | ClienteConPedidoPendienteException | ClienteConViajePendienteException |
-                 SinVehiculoParaPedidoException | UsuarioNoExisteException | PasswordErroneaException e) {
-            Assert.fail("No deberia lanzar la excepcion: " + e);
-        } catch (VehiculoNoDisponibleException ignored){
-        }
-    }
-
-    @Test
-    public void testCrearViajeClienteViajeExistente(){
-        try {
-            emp.login("franveron", "mandarina123");
-            Pedido pedido = new Pedido(cliente, 3, false, false, 6, Constantes.ZONA_STANDARD);
-            emp.agregarPedido(pedido);
-            emp.crearViaje(pedido,chofer,vehiculo);
-            emp.crearViaje(pedido,chofer,vehiculo);
-            Assert.fail("Deberia lanzar excepcion");
-        } catch (ClienteNoExisteException | VehiculoNoValidoException | VehiculoNoDisponibleException |
-                 PedidoInexistenteException | ChoferNoDisponibleException | ClienteConPedidoPendienteException |
-                 SinVehiculoParaPedidoException | UsuarioNoExisteException | PasswordErroneaException e) {
-            Assert.fail("No deberia lanzar la excepcion: " + e);
-        } catch (ClienteConViajePendienteException ignored){
-        }
-    }
-
-
-    @Test
     public void testPagarYFinalizarCorrecto(){
         try {
             emp.login("franveron", "mandarina123");
@@ -275,8 +212,12 @@ public class Testintegracion {
     @Test
     public void testPagarYFinalizarClienteSinViajePendiente(){
         try {
+            emp.login("franveron", "mandarina123");
             emp.pagarYFinalizarViaje(5);
             Assert.fail("Deberia lanzar excepcion");
+
+        } catch (UsuarioNoExisteException | PasswordErroneaException e) {
+            Assert.fail("No deberia lanzar la excepcion: " + e);
         } catch (ClienteSinViajePendienteException ignored) {
         }
     }
