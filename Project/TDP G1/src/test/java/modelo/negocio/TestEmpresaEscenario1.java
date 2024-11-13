@@ -4,10 +4,7 @@ import excepciones.ClienteConViajePendienteException;
 import excepciones.ClienteNoExisteException;
 import excepciones.PasswordErroneaException;
 import excepciones.UsuarioNoExisteException;
-import modeloDatos.ChoferPermanente;
-import modeloDatos.Cliente;
-import modeloDatos.Pedido;
-import modeloDatos.Vehiculo;
+import modeloDatos.*;
 import modeloNegocio.Empresa;
 import org.junit.After;
 import org.junit.Assert;
@@ -33,7 +30,8 @@ public class TestEmpresaEscenario1 {
             ChoferPermanente chofer;
             chofer = new ChoferPermanente("11111111", "Mateo", 2020, 4);
             emp.agregarChofer(chofer);
-            Assert.assertEquals(1, emp.getChoferes().size());
+            Assert.assertEquals("El chofer deberia estar en la lista de choferes", 1, emp.getChoferes().size());
+            Assert.assertEquals("El chofer registrado es incorrecto", chofer, emp.getChoferes().get("11111111"));
         } catch (Exception e) {
             Assert.fail("No deberia haber lanzado la excepcion " + e);
         }
@@ -58,7 +56,7 @@ public class TestEmpresaEscenario1 {
             emp.agregarPedido(pedido2);
             Assert.fail("Deberia haber lanzado la excepcion ClienteNoExisteException");
         } catch (ClienteNoExisteException e) {
-            Assert.assertEquals("El mensaje de la excepcion es incorrecto", e.getMessage(), Mensajes.CLIENTE_CON_VIAJE_PENDIENTE.getValor());
+            Assert.assertEquals("El mensaje de la excepcion es incorrecto", e.getMessage(), Mensajes.CLIENTE_NO_EXISTE.getValor());
         } catch (Exception e) {
             Assert.fail("Deberia haber lanzado la excepcion ClienteNoExisteException");
         }
@@ -73,10 +71,56 @@ public class TestEmpresaEscenario1 {
         }
     }
 
+    @Test
+    public void testAgregarVehiculo() {
+        try {
+            Assert.assertTrue("La lista de vehiculos deberia estar vacia", emp.getVehiculos().isEmpty());
+            Auto auto1 = new Auto("BBB112", 4, false);
+            emp.agregarVehiculo(auto1);
+            Assert.assertEquals("El vehiculo deberia estar en la lista de vehiculos", 1, emp.getVehiculos().size());
+            Assert.assertEquals("El vehiculo registrado es incorrecto", auto1, emp.getVehiculos().get("BBB112"));
+        } catch (Exception e) {
+            Assert.fail("No deberia haber lanzado la excepcion " + e);
+        }
+    }
+
+    @Test
+    public void testLogInAdmin() {
+        try {
+            emp.login("admin", "admin");
+            Assert.assertTrue("El usuario deberia ser admin", emp.isAdmin());
+        } catch (Exception e) {
+            Assert.fail("No deberia haber lanzado la excepcion " + e);
+        }
+    }
+
+    @Test
+    public void testLogInAdminPasswordErronea() {
+        try {
+            emp.login("admin", "adminn");
+            Assert.fail("Se deberia haber lanzado la excepcion PasswordErroneaException");
+        } catch (PasswordErroneaException e) {
+            Assert.assertEquals("El mensaje de la excepcion es incorrecto", e.getMessage(), Mensajes.PASS_ERRONEO.getValor());
+            Assert.assertEquals("El parametro usuario pretendido de la excepcion es incorrecto", e.getUsuarioPretendido(), "admin");
+            Assert.assertEquals("El parametro password pretendido de la excepcion es incorrecto", e.getPasswordPretendida(), "adminn");
+        } catch (Exception e) {
+            Assert.fail("Se deberia haber lanzado la excepcion PasswordErroneaException pero se lanzo " + e);
+        }
+    }
+
+    @Test
+    public void testgetUsuarioLogueado_user(){
+        try {
+            Assert.assertNull(emp.getUsuarioLogeado());
+        } catch (Exception e) {
+            Assert.fail("No deberia haber lanzado la excepcion " + e);
+        }
+    }
+
     @After
     public void tearDown()
     {
-        emp.logout();
+        emp.setUsuarioLogeado(null);
 
         emp.getClientes().clear();
         emp.getPedidos().clear();

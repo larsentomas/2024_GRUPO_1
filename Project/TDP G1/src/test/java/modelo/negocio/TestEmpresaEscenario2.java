@@ -10,6 +10,8 @@ import org.junit.Test;
 import util.Constantes;
 import util.Mensajes;
 
+import java.util.ArrayList;
+
 public class TestEmpresaEscenario2 {
     Empresa emp;
 
@@ -152,10 +154,94 @@ public class TestEmpresaEscenario2 {
         }
     }
 
+    @Test
+    public void testValidarPedido() {
+        try {
+            Pedido pedido2 = new Pedido(cliente1, 4, false, false, 1, Constantes.ZONA_STANDARD);
+            emp.agregarPedido(pedido2);
+            Assert.assertTrue("El pedido deberia ser valido", emp.validarPedido(pedido2));
+        } catch (Exception e) {
+            Assert.fail("No deberia haber lanzado la excepcion " + e);
+        }
+    }
+
+    @Test
+    public void testAgregarVehiculo() {
+        try {
+            Auto auto2 = new Auto("AAA111", 4, false);
+            emp.agregarVehiculo(auto2);
+            Assert.fail("Deberia haber lanzado la excepcion VehiculoRepetidoException");
+        } catch(VehiculoRepetidoException e) {
+            Assert.assertEquals("El mensaje de la excepcion es incorrecto", e.getMessage(), Mensajes.VEHICULO_YA_REGISTRADO.getValor());
+            Assert.assertEquals("El parametro vehiculo existente de la excepcion es incorrecto", e.getVehiculoExistente(), auto1);
+            Assert.assertEquals("El parametro matricula pretendida de la excepcion es incorrecto", e.getPatentePrentendida(), "AAA111");
+        } catch (Exception e) {
+            Assert.fail("No deberia haber lanzado la excepcion " + e);
+        }
+    }
+
+    @Test
+    public void testCrearViajePedidoInexistente() {
+        Pedido pedido1 = new Pedido(cliente1, 4, false, false, 1, Constantes.ZONA_STANDARD);
+        try {
+            emp.crearViaje(pedido1, chofer1, auto1);
+            Assert.fail("Deberia haber lanzado la excepcion PedidoInexistenteException");
+        } catch (PedidoInexistenteException e) {
+            Assert.assertEquals("El mensaje de la excepcion es incorrecto", e.getMessage(), Mensajes.PEDIDO_INEXISTENTE.getValor());
+            Assert.assertEquals("El parametro pedido de la excepcion es incorrecto", e.getPedido(), pedido1);
+        } catch (Exception e) {
+            Assert.fail("Deberia haber lanzado la excepcion PedidoInexistenteException, pero lanzo " + e);
+        }
+    }
+
+    @Test
+    public void testgetUsuarioLogueado_user(){
+        try {
+            emp.login("pepe123","mandarina123");
+            Assert.assertEquals("El usuario logueado es incorrecto", emp.getUsuarioLogeado(), emp.getClientes().get("pepe123"));
+        } catch (UsuarioNoExisteException | PasswordErroneaException e) {
+            Assert.fail("No deberia haber lanzado la excepcion " + e);
+        }
+    }
+    @Test
+    public void testgetUsuarioLogueado_admin(){
+        try {
+            emp.login("admin","admin");
+            Assert.assertTrue("El usuario logueado es incorrecto", emp.isAdmin());
+        } catch (UsuarioNoExisteException | PasswordErroneaException e) {
+            Assert.fail("No deberia haber lanzado la excepcion " + e);
+        }
+    }
+
+    @Test
+    public void testCalificacionDeChofer(){
+        try {
+            double puntajes = 0;
+            int count = 0;
+            for (Viaje viaje : emp.getHistorialViajeChofer(chofer1)) {
+                puntajes += viaje.getCalificacion();
+                count++;
+            }
+            puntajes /= count;
+            Assert.assertEquals("La calificacion promedio del chofer es incorrecta", puntajes, emp.calificacionDeChofer(chofer1),0.000001);
+        } catch (SinViajesException e) {
+            Assert.fail("No deberia haber lanzado la excepcion " + e);
+        }
+    }
+
+    @Test
+    public void getHistorialViajeChofer(){
+        try {
+            Assert.assertNotNull(emp.getHistorialViajeChofer(chofer1));
+        }catch (Exception e) {
+            Assert.fail("No deberia haber lanzado la excepcion " + e);
+        }
+    }
+
     @After
     public void tearDown()
     {
-        emp.logout();
+        emp.setUsuarioLogeado(null);
 
         emp.getClientes().clear();
         emp.getPedidos().clear();
