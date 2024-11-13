@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import util.Constantes;
+import util.Mensajes;
 
 public class TestIntegracion {
 
@@ -110,8 +111,9 @@ public class TestIntegracion {
         try {
             emp.agregarCliente("franveron", "mandarina123", "Francisco Veron");
             Assert.fail("Deberia lanzar excepcion");
-        } catch (UsuarioYaExisteException ignored) {
-
+        } catch (UsuarioYaExisteException e) {
+            Assert.assertEquals("El mensaje de la excepcion es incorrecto", e.getMessage(), Mensajes.USUARIO_REPETIDO.getValor());
+            Assert.assertEquals("El parametro usuario pretendido de la excepcion es incorrecto", e.getUsuarioPretendido(), "franveron");
         }
     }
 
@@ -140,7 +142,8 @@ public class TestIntegracion {
         } catch (ClienteConViajePendienteException | ClienteConPedidoPendienteException |
                  SinVehiculoParaPedidoException | PasswordErroneaException | UsuarioNoExisteException e) {
             Assert.fail("No deberia lanzar la excepcion: " + e);
-        } catch (ClienteNoExisteException ignored) {
+        } catch (ClienteNoExisteException e) {
+            Assert.assertEquals("El mensaje de la excepcion es incorrecto", e.getMessage(), Mensajes.CLIENTE_NO_EXISTE.getValor());
         }
 
     }
@@ -158,7 +161,8 @@ public class TestIntegracion {
                  PedidoInexistenteException | ChoferNoDisponibleException | ClienteConPedidoPendienteException |
                  SinVehiculoParaPedidoException | PasswordErroneaException | UsuarioNoExisteException  e) {
             Assert.fail("No deberia lanzar la excepcion: " + e);
-        } catch (ClienteConViajePendienteException ignored){
+        } catch (ClienteConViajePendienteException e){
+            Assert.assertEquals("El mensaje de la excepcion es incorrecto", e.getMessage(), Mensajes.CLIENTE_CON_VIAJE_PENDIENTE.getValor());
         }
     }
 
@@ -174,6 +178,7 @@ public class TestIntegracion {
                  PasswordErroneaException | UsuarioNoExisteException e) {
             Assert.fail("No deberia lanzar la excepcion: " + e);
         } catch (SinVehiculoParaPedidoException e) {
+            Assert.assertEquals("El mensaje de la excepcion es incorrecto", e.getMessage(), Mensajes.SIN_VEHICULO_PARA_PEDIDO.getValor());
         }
     }
 
@@ -188,7 +193,8 @@ public class TestIntegracion {
         } catch (ClienteNoExisteException | SinVehiculoParaPedidoException | ClienteConViajePendienteException |
                  PasswordErroneaException | UsuarioNoExisteException e) {
             Assert.fail("No deberia lanzar la excepcion: " + e);
-        } catch (ClienteConPedidoPendienteException ignored) {
+        } catch (ClienteConPedidoPendienteException e) {
+            Assert.assertEquals("El mensaje de la excepcion es incorrecto", e.getMessage(), Mensajes.CLIENTE_CON_PEDIDO_PENDIENTE.getValor());
         }
     }
 
@@ -218,7 +224,8 @@ public class TestIntegracion {
 
         } catch (UsuarioNoExisteException | PasswordErroneaException e) {
             Assert.fail("No deberia lanzar la excepcion: " + e);
-        } catch (ClienteSinViajePendienteException ignored) {
+        } catch (ClienteSinViajePendienteException e) {
+            Assert.assertEquals("El mensaje de la excepcion es incorrecto", e.getMessage(), Mensajes.CLIENTE_SIN_VIAJE_PENDIENTE.getValor());
         }
     }
 
@@ -244,7 +251,8 @@ public class TestIntegracion {
             Assert.fail("Deberia lanzar excepcion");
         } catch (PasswordErroneaException | UsuarioNoExisteException e) {
             Assert.fail("No deberia lanzar la excepcion: " + e);
-        } catch (VehiculoRepetidoException ignored) {
+        } catch (VehiculoRepetidoException e) {
+            Assert.assertEquals("El mensaje de la excepcion es incorrecto", e.getMessage(), Mensajes.VEHICULO_YA_REGISTRADO.getValor());
         }
     }
 
@@ -268,7 +276,8 @@ public class TestIntegracion {
             Assert.fail("Deberia lanzar excepcion");
         } catch (UsuarioNoExisteException | PasswordErroneaException e) {
             Assert.fail("No deberia lanzar la excepcion: " + e);
-        } catch (ChoferRepetidoException ignored) {
+        } catch (ChoferRepetidoException e) {
+            Assert.assertEquals("El mensaje de la excepcion es incorrecto", e.getMessage(), Mensajes.CHOFER_YA_REGISTRADO.getValor());
         }
     }
 
@@ -311,7 +320,8 @@ public class TestIntegracion {
                  SinVehiculoParaPedidoException | UsuarioNoExisteException | PasswordErroneaException |
                  VehiculoRepetidoException | ChoferRepetidoException e) {
             Assert.fail("No deberia lanzar la excepcion: " + e);
-        } catch (ClienteConViajePendienteException ignored){
+        } catch (ClienteConViajePendienteException e){
+            Assert.assertEquals("El mensaje de la excepcion es incorrecto", e.getMessage(), Mensajes.CLIENTE_CON_VIAJE_PENDIENTE.getValor());
         }
     }
 
@@ -325,7 +335,8 @@ public class TestIntegracion {
         } catch (VehiculoNoValidoException | VehiculoNoDisponibleException | ChoferNoDisponibleException |
                  ClienteConViajePendienteException | UsuarioNoExisteException | PasswordErroneaException e) {
             Assert.fail("No deberia lanzar la excepcion: " + e);
-        } catch (PedidoInexistenteException ignored){
+        } catch (PedidoInexistenteException e){
+            Assert.assertEquals("El mensaje de la excepcion es incorrecto", e.getMessage(), Mensajes.PEDIDO_INEXISTENTE.getValor());
         }
     }
 
@@ -344,7 +355,8 @@ public class TestIntegracion {
                  ClienteConViajePendienteException | UsuarioNoExisteException | PasswordErroneaException |
                  VehiculoRepetidoException e) {
             Assert.fail("No deberia lanzar la excepcion: " + e);
-        } catch (VehiculoNoValidoException ignored){
+        } catch (VehiculoNoValidoException e){
+            Assert.assertEquals("El mensaje de la excepcion es incorrecto", e.getMessage(), Mensajes.VEHICULO_NO_VALIDO.getValor());
         }
     }
 
@@ -362,6 +374,7 @@ public class TestIntegracion {
                  SinVehiculoParaPedidoException | UsuarioNoExisteException | PasswordErroneaException e) {
             Assert.fail("No deberia lanzar la excepcion: " + e);
         } catch (VehiculoNoDisponibleException e){
+            Assert.assertEquals("El mensaje de la excepcion es incorrecto", e.getMessage(), Mensajes.VEHICULO_NO_DISPONIBLE.getValor());
         }
     }
 
@@ -379,6 +392,7 @@ public class TestIntegracion {
                  SinVehiculoParaPedidoException | UsuarioNoExisteException | PasswordErroneaException e) {
             Assert.fail("No deberia lanzar la excepcion: " + e);
         } catch (ChoferNoDisponibleException e){
+            Assert.assertEquals("El mensaje de la excepcion es incorrecto", e.getMessage(), Mensajes.CHOFER_NO_DISPONIBLE.getValor());
         }
     }
 }
