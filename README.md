@@ -1,2 +1,1 @@
-# TDP_G1
-Trabajo Práctico TDP1 Grupo 1
+# Taller de Programación 2024 Grupo 1
