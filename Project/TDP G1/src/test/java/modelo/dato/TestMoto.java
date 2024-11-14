@@ -43,9 +43,9 @@ public class TestMoto {
     }
 
     @Test
-    public void testgetPuntajePedidoInvalido() {
+    public void testgetPuntajePedidoInvalido1() {
         Cliente cliente = new Cliente("franveron", "mandarina123", "Francisco Veron");
-        Pedido pedido2 = new Pedido(cliente, 2, false, false, 6, Constantes.ZONA_STANDARD );
+        Pedido pedido2 = new Pedido(cliente, 2, true, true, 6, Constantes.ZONA_STANDARD );
 
         Assert.assertNull(moto.getPuntajePedido(pedido2));
     }

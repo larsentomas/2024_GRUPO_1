@@ -113,7 +113,7 @@ public class TestEmpresaEscenario2 {
     public void testLoginUsuarioIncorrecto(){
         try{
             emp.login("ximenaconX","mandarinagloton");
-            Assert.fail("Deberia lanzar excepción");
+            Assert.fail("Deberia lanzar excepción UsuarioNoExisteException");
         } catch (PasswordErroneaException e){
             Assert.fail("No deberia lanzar la excepcion: " + e);
         } catch (UsuarioNoExisteException e){

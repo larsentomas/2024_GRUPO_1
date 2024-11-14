@@ -34,14 +34,13 @@ public class TestCombi {
     }
 
     @Test
-    public void testgetPuntajePedidoConBaul() {
-        Pedido pedido3 = new Pedido(cliente, 5, false, true, 6, Constantes.ZONA_SIN_ASFALTAR );
-
-        Assert.assertEquals((Integer) 150, combi.getPuntajePedido(pedido3)); // TODO: Fallo
+    public void testgetPuntajePedidoConBaulMascota() {
+        Pedido pedido3 = new Pedido(cliente, 5, true, true, 6, Constantes.ZONA_SIN_ASFALTAR );
+        Assert.assertEquals((Integer) 50, combi.getPuntajePedido(pedido3));
     }
 
     @Test
-    public void testgetPuntajePedidoSinBaul() {
+    public void testgetPuntajePedidoSinBaulMascota() {
         Pedido pedido2 = new Pedido(cliente, 5, false, false, 6, Constantes.ZONA_SIN_ASFALTAR );
 
         Assert.assertEquals((Integer) 50, combi.getPuntajePedido(pedido2));

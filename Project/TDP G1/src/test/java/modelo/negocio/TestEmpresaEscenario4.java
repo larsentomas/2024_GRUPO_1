@@ -65,7 +65,7 @@ public class TestEmpresaEscenario4 {
     @Test
     public void testAgregarPedidoClienteConViajePendiente() {
         try {
-            Pedido pedido2 = new Pedido(cliente1, 4, false, false, 1, Constantes.ZONA_SIN_ASFALTAR);
+            Pedido pedido2 = new Pedido(cliente2, 4, false, false, 1, Constantes.ZONA_SIN_ASFALTAR);
             emp.agregarPedido(pedido2);
             Assert.fail("Deberia haber lanzado la excepcion ClienteConViajePendienteException");
         } catch (ClienteConViajePendienteException e) {
@@ -76,7 +76,7 @@ public class TestEmpresaEscenario4 {
     }
 
     @Test
-    public void testCrearViajeChoferInexistente() {
+    public void testCrearViajeChoferNoDisponible() {
         ChoferPermanente chofer2 = new ChoferPermanente("88888888", "Mateo", 2020, 4);
         try {
             emp.crearViaje(pedido1, chofer2, auto2);
