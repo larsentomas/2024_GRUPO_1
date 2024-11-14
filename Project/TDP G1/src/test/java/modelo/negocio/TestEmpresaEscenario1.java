@@ -65,7 +65,7 @@ public class TestEmpresaEscenario1 {
     @Test
     public void testIsAdmin_User() {
         try {
-            Assert.assertFalse("Deberia haber lanzalo excepcion NullPointerException",emp.isAdmin());
+            Assert.assertFalse("Deberia devolver false",emp.isAdmin());
         }catch (Exception e){
             Assert.fail("No deberia haber lanzado la excepcion " + e);
         }

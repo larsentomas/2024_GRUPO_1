@@ -13,9 +13,6 @@ import util.Mensajes;
 
 import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class GuiTestAdminAltas {
 

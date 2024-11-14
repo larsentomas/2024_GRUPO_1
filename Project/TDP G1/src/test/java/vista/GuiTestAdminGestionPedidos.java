@@ -33,11 +33,10 @@ public class GuiTestAdminGestionPedidos {
     static Chofer chofer1;
     static Chofer chofer2;
 
-    @BeforeClass
-    public static void setUp() {
+    @Before
+    public void setUp() {
         try {
             e = Empresa.getInstance();
-
             robot = new Robot();
             controlador = new Controlador();
 
@@ -83,7 +82,7 @@ public class GuiTestAdminGestionPedidos {
     @Test
     public void testNuevoViajeSinSeleccionar() {
         controlador.getVista().actualizar();
-        robot.delay(3000);
+        robot.delay(GuiTestUtils.getDelay());
         Assert.assertNotEquals("La lista de choferes libres deberia tener al menos un chofer", 0, choferesLibres.getModel().getSize());
         Assert.assertNotEquals("La lista de pedidos pendientes deberia tener al menos un pedido", 0, pedidosPendientes.getModel().getSize());
         Assert.assertEquals("La lista de vehiculo deberia estar vacia hasta que se seleccione un pedido", 0, vehiculosLibres.getModel().getSize());
@@ -93,7 +92,7 @@ public class GuiTestAdminGestionPedidos {
     @Test
     public void testNuevoViajeSeleccionarPedidoYChofer() {
         controlador.getVista().actualizar();
-        robot.delay(3000);
+        robot.delay(GuiTestUtils.getDelay());
         pedidosPendientes.setSelectedIndex(0);
         Pedido pedidosSeleccionado = pedidosPendientes.getSelectedValue();
         choferesLibres.setSelectedIndex(0);
@@ -111,7 +110,7 @@ public class GuiTestAdminGestionPedidos {
     @Test
     public void testNuevoViajeSeleccionarTodo() {
         controlador.getVista().actualizar();
-        robot.delay(3000);
+        robot.delay(GuiTestUtils.getDelay());
         try {
             pedidosPendientes.setSelectedIndex(0);
             choferesLibres.setSelectedIndex(0);
